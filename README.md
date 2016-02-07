@@ -1,2 +1,2 @@
 # USS
-Ultrafast Skeleton for SPOC 
+Ultrafast Skeleton with SPOC 
