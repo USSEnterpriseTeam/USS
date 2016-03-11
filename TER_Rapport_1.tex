@@ -1,5 +1,9 @@
 \documentclass{report}
 
+\usepackage[utf8]{inputenc}  
+\usepackage[T1]{fontenc}    
+%\usepackage[nottoc, notlof, notlot]{tocbibind}
+
 % Peut etre utile plus tard
 % \usepackage[latin1]{inputenc}
 % \usepackage[T1]{fontenc}
@@ -13,40 +17,51 @@
 \begin{document}
 \maketitle
 
-\chapter{Etude des squelettes existants}
-Afin de mieux comprendre le but de notre travail, nous avons fait des recherches sur la programmation de squelettes. Nous nous sommes ainsi intéressé à deux librairies qui semblent reprendre le concept qui nous intéresse : Thrust et SkePU.
-\section{Thrust}
-Cette librairie de templates C++ pour Cuda est basée sur la STL (Standard Template Library). Elle permet l'utilisation d'algorithmes parallèles avec un minimum de code. Ainsi, on retrouve les algorithmes suivant :
+\chapter{Introduction}
+\section{Présentation de GPGPU}
+\cite{ref}
+GPGPU (General Purpose on Graphic Processing Units), est un principe informatique visant à utiliser le processeur graphique comme processeur de calcul générique. L’objectif étant de bénéficier de l’architecture massivement parallèle d’un processeur graphique et ainsi résoudre des problèmes pour lesquels nous avons des algorithmes parallèles efficaces.
 
+En effet le processeurs graphique à une capacité de calculs beaucoup plus grande que celle d’un processeur classique. Pour peu qu’il existe un algorithme parallèle pour un problème donné. La programmation GPGPU n’est applicable qu’avec utilisation de drivers et des librairies associées. Ces drivers et librairies généralement proposé par les constructeurs de processeur - Intel, Nvidia, … - permettent la programmation sur la carte pour des informaticiens chevronnés. Il existe deux piliers dans la programmation GPGPU, OpenCL - librairies ouvertes par Kronos Group, et Cuda - développée par Nvidia et nécessitant un GPU Nvidia.
+
+La programmation GPGPU étant d’assez bas-niveaux, il existe des librairies permettant d’abstraire certains principes, comme la gestion mémoire. 
+
+\section{Présentation de SPOC}
+SPOC, Stream Processing with OCaml est une bibliothèque qui propose une abstraction pour la programmation GPGPU. Son principal but est de fournir une solution portable, multi-GPGPU, et hétérogène tout en gardant de hautes performances.
+
+Elle permet ainsi l’utilisation des systèmes Cuda/OpenCL avec OCaml, l’unification de ces deux API se faisant via une liaison dynamique, ainsi que d’abstraire également les transferts de données entre le CPU et la carte graphique. 
+
+Enfin, elle permet aussi d’utiliser le typage statique afin de vérifier les noyaux de calcul, écrit en Sarek.
+
+Il existe deux solutions afin d’exprimer les noyaux :
 \begin{itemize}
 
-\item Transformation : applique une opération sur un set de données et met le résultat dans un set déstination.
-\item Reduction : utilise une opération binaire pour réduire une entrée en une unique valeur.
-\item Prefix-Sums : ou opération <<scan>> permet par exemple, sur un tableau en entrée, d'obtenir en sortie un tableau avec les sommets cumulés.
-\item Reordering : permet d'arranger ou partitionner des données selon des prédicats de test.
-\item Sorting : différents algorithmes de tri.
+\item Sarek, un langage proche de OCaml : son but étant qu’ils soient simples à exprimer, aient des performances prédictibles, qu’ils soient extensibles, compatibles avec les bibliothèques hautes performances existantes et enfin optimisables.
+\item L’interoperabilité avec les noyaux Cuda/OpenCL : permet de réaliser des optimisations supplémentaires, la compatibilité avec les bibliothèques actuelles, mais est moins sûr que Sarek.
 
 \end{itemize}
 
-\section{SkePU}
-Librairie de templates C++ mettant à disposition un ensemble de squelettes génériques déstinés à faciliter la création de code à executer en parallèle. On y retrouve des fonctions similaires à Thrust.
+\section{Présentation des Squelettes de programmation}
+Les squelettes de programmation est une forme de programmation avancée permettant de développer des structures dans un code haut-level. Le code écrit s’apparente principalement  à du pseudo-code et permet d’analyser, de compiler ou même de tester du code. Aussi appelé Code Débutant, il permet de simuler des calculs et d’éviter notamment des erreurs de compilations, notamment en permettant à l’utilisateur d’écrire du code en utilisant des structures haut-level tout en évitant certaines limitations imposés par la structure du langage utilisé où tout simplement pour contourner certains problèmes d’ordre algorithmique. De cette façon, il devient plus facile de créer des algorithmes complexes.
+Les squelettes de programmation sont notamment très utilisés lors de l’utilisation de design pattern dynamique tel que les templates dans plusieurs langages. Ils sont aussi très utilisés pour permettre de découper le code en structure de données permettant ainsi une lecture plus facile comme avec l’utilisation d'interface, de classe abstraite ou même de méthode virtuelle. Bien d’autres utilisations existes notamment pour faciliter des communications réseaux.
+
+\chapter{Présentation du sujet}
+
+\section{Introduction au domaine}
+La programmation GPGPU permet de profiter de l’architecture massivement parallèle de la carte graphique. La Carte graphique possède une architecture spécifique proposant de nombreuse unité de calcule. Elle est decoupé en plusieurs cluster, eux-même découper en plusieurs SM. Les SM (Streaming Multi-processor) possède une mémoire locale, ils possèdent plusieurs processor permettant les 
+
+\section{Analyse de l'existant}
+Actuellement, la version de SPOC disponible permet déjà d’effectuer des calculs sur la carte graphique, que ce soit en utilisant Cuda ou OpenCL. Elle nous donne également le choix entre l’utilisation de noyaux Sarek ou bien en Cuda/OpenCL. De plus, SPOC met à notre disposition trois bibliothèques, Sarek en faisant partie : 
 
 \begin{itemize}
 
-\item Map
-\item MapReduce
-\item MapOverlap
-\item MapArray
-\item Generate
-\item Scan
+\item Compose : met à disposition des squelettes (par exemple “map”)
+\item Cublas : met à disposition des fonctions de la bibliothèques cuBLAS (Une partie de CUDA Toolkit)
+\item Sarek : permet d’exprimer les noyaux
 
 \end{itemize}
 
-\chapter{Comment intégrer ces notions dans Spoc ?}
-\section{Modification de l'arbre}
-blablalba
-
-\section{Génération de code Sarek}
-blabla
+\bibliographystyle{plain}
+\bibliography{biblio}
 
 \end{document}
