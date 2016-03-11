@@ -2,7 +2,7 @@
 
 \usepackage[utf8]{inputenc}  
 \usepackage[T1]{fontenc}    
-%\usepackage[nottoc, notlof, notlot]{tocbibind}
+\usepackage{graphicx}
 
 % Peut etre utile plus tard
 % \usepackage[latin1]{inputenc}
@@ -48,7 +48,13 @@ Les squelettes de programmation sont notamment très utilisés lors de l’utili
 \chapter{Présentation du sujet}
 
 \section{Introduction au domaine}
-La programmation GPGPU permet de profiter de l’architecture massivement parallèle de la carte graphique. La Carte graphique possède une architecture spécifique proposant de nombreuse unité de calcule. Elle est decoupé en plusieurs cluster, eux-même découper en plusieurs SM. Les SM (Streaming Multi-processor) possède une mémoire locale, ils possèdent plusieurs processor permettant les 
+La programmation GPGPU permet de profiter de l’architecture massivement parallèle du GPU. La GPU possède une architecture SIMD (Single Instruction Multiple Data), proposant de nombreuse unité de calcule. 
+
+Le GPU est decoupé en plusieurs TCP (Texture Processing Cluster), eux-même découper en plusieurs SM. Les SM (Streaming Multi-processor) possèdent une mémoire locale, ils possèdent plusieurs SP (Streaming Processor) permettant des calculs sur nombres flottants, ainsi que des unités SFU (Special Function) Unit permettant le calcul de fonctions spécifiques - cos, sin… . Une mémoire globale est la disposition de chacun des cluster mais est beaucoup plus lentes que la mémoire locale.
+
+\includegraphics[height=150]{image00.png}
+\includegraphics[height=150]{image01.png}
+
 
 \section{Analyse de l'existant}
 Actuellement, la version de SPOC disponible permet déjà d’effectuer des calculs sur la carte graphique, que ce soit en utilisant Cuda ou OpenCL. Elle nous donne également le choix entre l’utilisation de noyaux Sarek ou bien en Cuda/OpenCL. De plus, SPOC met à notre disposition trois bibliothèques, Sarek en faisant partie : 
