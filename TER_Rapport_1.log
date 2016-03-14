@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.3.14)  14 MAR 2016 10:53
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.3.14)  14 MAR 2016 10:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -531,7 +531,7 @@ texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx2074.600pk> </home/emile/.texmf-var/f
 onts/pk/ljfour/jknappen/ec/ecrm1200.600pk> </home/emile/.texmf-var/fonts/pk/ljf
 our/jknappen/ec/ecrm1728.600pk></usr/share/texlive/texmf-dist/fonts/type1/publi
 c/amsfonts/cm/cmsy10.pfb>
-Output written on TER_Rapport_1.pdf (7 pages, 112262 bytes).
+Output written on TER_Rapport_1.pdf (7 pages, 112272 bytes).
 PDF statistics:
  248 PDF objects out of 1000 (max. 8388607)
  50 compressed objects within 1 object stream
