@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.2.27)  14 MAR 2016 13:11
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.2.27)  14 MAR 2016 13:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -452,41 +452,51 @@ Underfull \hbox (badness 10000) in paragraph at lines 50--51
 
  []
 
-[2]
-Chapter 2.
 
-Underfull \hbox (badness 10000) in paragraph at lines 65--66
+Underfull \hbox (badness 10000) in paragraph at lines 52--53
 
  []
 
-<image2.png, id=19, 401.5pt x 301.125pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 54--55
+
+ []
+
+[2] [3]
+Chapter 2.
+
+Underfull \hbox (badness 10000) in paragraph at lines 83--84
+
+ []
+
+<image2.png, id=23, 401.5pt x 301.125pt>
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    \relax 
-l.71 \includegraphics[height=150]{image2.png}
+l.89 \includegraphics[height=150]{image2.png}
                                              
 ? 
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
                    \relax 
-l.71 \includegraphics[height=150]{image2.png}
+l.89 \includegraphics[height=150]{image2.png}
                                              
 ? 
 File: image2.png Graphic file (type png)
 <use image2.png>
-Package pdftex.def Info: image2.png used on input line 71.
+Package pdftex.def Info: image2.png used on input line 89.
 (pdftex.def)             Requested size: 200.00821pt x 150.0pt.
 
 ! Misplaced alignment tab character &.
 <argument> ... GPGPU avec Cuda, Mathias Bourgoin &
                                                    Sylvain Jubertie.
-l.73 ...uda, Mathias Bourgoin & Sylvain Jubertie.}
+l.91 ...uda, Mathias Bourgoin & Sylvain Jubertie.}
                                                   
 ? 
 ! Misplaced alignment tab character &.
 <argument> ... GPGPU avec Cuda, Mathias Bourgoin &
                                                    Sylvain Jubertie.
-l.73 ...uda, Mathias Bourgoin & Sylvain Jubertie.}
+l.91 ...uda, Mathias Bourgoin & Sylvain Jubertie.}
                                                   
 ? 
 
@@ -496,25 +506,25 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.75 \end{figure} \newline
+l.93 \end{figure} \newline
                           
 ? 
-[3
+[4
 
  <./image2.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 80--81
+Underfull \hbox (badness 10000) in paragraph at lines 98--99
 
  []
 
-[4]
+[5]
 Chapter 3.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 96.
+(Font)              <7> on input line 114.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 96.
-[5
+(Font)              <5> on input line 114.
+[6
 
-] (./TER_Rapport_1.bbl [6]
+] (./TER_Rapport_1.bbl [7]
 ! Misplaced alignment tab character &.
 l.4 ...mmation GPGPU avec Cuda, Mathias Bourgoin &
                                                   
@@ -526,39 +536,40 @@ s\T1/cmr/m/n/10 .
  []
 
 ! You can't use `macro parameter character #' in horizontal mode.
-l.22 ...omputing\_on\_graphics\_processing\_units#
+l.18 ...omputing\_on\_graphics\_processing\_units#
                                                   Map.
 ? 
 
-Underfull \hbox (badness 10000) in paragraph at lines 20--23
+Underfull \hbox (badness 10000) in paragraph at lines 16--19
 []\T1/cmr/m/it/10 The map op-er-a-tion\T1/cmr/m/n/10 .  https://en.wikipedia.or
 g/wiki/General-
  []
 
-) [7
+) [8
 
 ] (./TER_Rapport_1.aux) ) 
 Here is how much of TeX's memory you used:
- 3733 strings out of 494999
- 48798 string characters out of 6180228
+ 3734 strings out of 494999
+ 48810 string characters out of 6180228
  124809 words of memory out of 5000000
  6906 multiletter control sequences out of 15000+600000
- 14772 words of font info for 34 fonts, out of 8000000 for 9000
+ 15548 words of font info for 35 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  38i,6n,49p,558b,1086s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/guidono/.texmf-var/fonts/pk/ljfour/jknappen/ec
 /ecti1000.600pk> </home/guidono/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000
-.600pk> </home/guidono/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> <
-/home/guidono/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> </home/gui
-dono/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx2488.600pk> </home/guidono/.tex
-mf-var/fonts/pk/ljfour/jknappen/ec/ecbx2074.600pk> </home/guidono/.texmf-var/fo
-nts/pk/ljfour/jknappen/ec/ecrm1200.600pk> </home/guidono/.texmf-var/fonts/pk/lj
-four/jknappen/ec/ecrm1728.600pk></usr/share/texlive/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmsy10.pfb>
-Output written on TER_Rapport_1.pdf (8 pages, 127701 bytes).
+.600pk> </home/guidono/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> <
+/home/guidono/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> </home/gui
+dono/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> </home/guidono/.tex
+mf-var/fonts/pk/ljfour/jknappen/ec/ecbx2488.600pk> </home/guidono/.texmf-var/fo
+nts/pk/ljfour/jknappen/ec/ecbx2074.600pk> </home/guidono/.texmf-var/fonts/pk/lj
+four/jknappen/ec/ecrm1200.600pk> </home/guidono/.texmf-var/fonts/pk/ljfour/jkna
+ppen/ec/ecrm1728.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmsy10.pfb>
+Output written on TER_Rapport_1.pdf (9 pages, 133794 bytes).
 PDF statistics:
- 301 PDF objects out of 1000 (max. 8388607)
- 56 compressed objects within 1 object stream
+ 325 PDF objects out of 1000 (max. 8388607)
+ 62 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

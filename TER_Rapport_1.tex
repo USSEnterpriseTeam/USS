@@ -37,9 +37,9 @@ Enfin, elle permet aussi d’utiliser le typage statique afin de vérifier les n
 
 Il existe deux solutions afin d’exprimer les noyaux :
 \begin{itemize}
-
+  
 \item Sarek : un langage proche de OCaml. Sarek est compatible avec les bibliothèques existantes, ses performances sont facilement prévisibles et optimisables.
-
+  
 \item L’interopérabilité avec les noyaux Cuda/OpenCL : permet de réaliser des optimisations supplémentaires, compatible avec les bibliothèques actuelles, mais moins robuste que Sarek.
 
 
@@ -47,15 +47,33 @@ Il existe deux solutions afin d’exprimer les noyaux :
 
 
 \section{Les Squelettes de programmation}
-Les squelettes de programmation\cite{refSkeleton} sont une forme de programmation, où il existe des éléments génériques pré-définis - tel que map, reduce, farm, pipe etc.... Ces squelettes peuvent être personnalisés grâce à du code utilisateur.\newline
+Les squelettes de programmation\cite{refSkeleton} sont une forme de programmation, ou il existe des éléments générique pré-définis - tel que map, reduce, farm, pipe etc... Ces squelettes peuvent être personnalisé grâce à du code utilisateur.\newline
 
-Les squelettes\cite{refSkePU} permettent une abstraction de haut niveau et aident les utilisateurs à implémenter des algorithmes complexes comme les algorithmes parallèles. Les algorithmes suivant sont généralement implémentés en tant que squelette dans les bibliothèques de programmation GPGPU.
+Les squelettes permettent une abstraction de haut niveau et aident les utilisateurs à implémenter des algorithmes complexe comme les algorithmes parallèles. Les algorithmes suivant sont généralement implémenté en tant que squelette dans les bibliothèque de programmation GPGPU.\newline
+
+Afin de mieux comprendre le but de notre travail, nous avons fait des recherches sur la programmation de tels squelettes sur internet. Nous avons ainsi pris exemple sur deux bibliothèques qui semblent reprendre les concepts nous intéressent : Thrust, développée par Nvidia, et SkePU.\newline
+
+\subsection{Thrust}
+Cette bibliothèque de templates C++ pour Cuda est basée sur la STL (Standard Template Library). Elle permet l’utilisation d’algorithmes parallèles avec un minimum de code. Ainsi, on retrouve les algorithmes suivant :
 
 \begin{itemize}
-\item map\cite{refMap} - applique une fonction donnée à toutes les entrées d’un tableau.
-\item reduce - réduction d’un tableau dans une variable, en fonction d’un operateur donné.
-\item sort - tri un ensemble d’élément à l’aide d’une relation d’ordre donné.
-\item stream-filtering - applique la même opération que le reduce mais en écartant quelque élément selon un critère donné.
+\item Transformations : applique une opération d’un “set” de données et met le résultat dans un “set” de destination. 
+\item Réductions : utilise une opération binaire pour réduire une entrée en une unique valeur. 
+\item Prefix-Sums : ou opération “scan” permet par exemple, sur un tableau en entrée, d’obtenir en sortie un tableau avec les sommes cumulées.
+\item Reordering : permet d’arranger ou partitionner des données selon des prédicats de test.
+\item Sort : tri un ensemble d’élément à l’aide d’une relation d’ordre donné.
+\end{itemize}
+
+\subsection{SkePU}
+Librairie de templates C++ mettant à disposition un ensemble de squelettes génériques.
+
+\begin{itemize}
+\item Map\cite{refMap} - applique une fonction donnée à toutes les entrées d’un tableau.
+\item MapReduce - réduction d’un tableau dans une variable, en fonction d’un operateur donné.
+\item MapOverlap
+\item MapArray
+\item Generate
+\item Scan
 \item ...
 \end{itemize}
 
