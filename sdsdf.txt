@@ -1,0 +1,29 @@
+Présentation du Sujet
+
+- GPGPU
+- SPOC
+- Squelettes
+
+Introduction au domaine
+
+- GPGPU
+
+Analyse de l'existant
+
+- SPOC
+
+Liste et analyse des besoins non fonctionnels
+
+- SPOC, Cuda, OpenCL
+
+Liste et analyse des besoins fonctionnels
+
+- Entrées / Sorties
+
+Description de prototypes et des résultats de tests préparatoires
+
+Planning / Affectation des tâches
+
+Bibliographies
+
+- Ref vers les PDFs trouvés
