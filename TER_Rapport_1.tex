@@ -17,22 +17,23 @@
 \maketitle
 
 \chapter{Introduction}
-\section{La Programmation GPGPU}
-La programmation GPGPU (General Purpose on Graphic Processing Units), est un principe informatique visant à utiliser le processeur graphique comme processeur de calcul générique. L’objectif étant de bénéficier de l’architecture massivement parallèle d’un processeur graphique et ainsi résoudre des problèmes pour lesquels nous avons des algorithmes parallèles efficaces.
 
-En effet le processeur graphique possède une capacité de calcul beaucoup plus grande que celle d’un processeur classique. Pour peu qu’il existe un algorithme parallèle pour un problème donné. La programmation GPGPU n’est applicable qu’avec utilisation des pilotes et des bibliothèques associées. Ces pilotes et bibliothèques généralement proposés par les constructeurs de processeur (ex: Intel, Nvidia, …) permettent la programmation sur la carte graphique pour des informaticiens chevronnés. 
+\section{La Programmation GPGPU}
+La programmation GPGPU (General Purpose on Graphic Processing Units), est un principe informatique visant à utiliser le processeur graphique comme processeur de calcul générique. L’objectif étant de bénéficier de l’architecture massivement parallèle d’un processeur graphique et ainsi résoudre des problèmes pour lesquels nous avons des algorithmes parallèles efficaces.\newline
+
+En effet le processeur graphique possède une capacité de calcul beaucoup plus grande que celle d’un processeur classique. Pour peu qu’il existe un algorithme parallèle pour un problème donné. La programmation GPGPU n’est applicable qu’avec utilisation des pilotes et des bibliothèques associées. Ces pilotes et bibliothèques généralement proposés par les constructeurs de processeur (ex: Intel, Nvidia, …) permettent la programmation sur la carte graphique pour des informaticiens chevronnés.\newline 
 
 Il existe deux piliers dans la programmation GPGPU, OpenCL : bibliothèques ouvertes par Khronos Group, et Cuda : développée par Nvidia et nécessitant un GPU Nvidia.
-Les bibliothèques proposent la création de noyaux  (kernel), fonction exécuté sur le GPU, la gestion de mémoire sur le GPU et le passage de données entre la RAM du GPU et la RAM du CPU.
+Les bibliothèques proposent la création de noyaux  (kernel), fonction exécuté sur le GPU, la gestion de mémoire sur le GPU et le passage de données entre la RAM du GPU et la RAM du CPU.\newline
 
 La programmation GPGPU étant d’assez bas-niveaux, il existe des bibliothèques permettant d’abstraire certains principes, comme la gestion mémoire. 
 
 \section{SPOC}
-SPOC, Stream Processing with OCaml est une bibliothèque qui propose une abstraction pour la programmation GPGPU. Son principal but est de fournir une solution portable, multi-GPGPU, et hétérogène tout en gardant de hautes performances.
+SPOC, Stream Processing with OCaml est une bibliothèque qui propose une abstraction pour la programmation GPGPU. Son principal but est de fournir une solution portable, multi-GPGPU, et hétérogène tout en gardant de hautes performances.\newline
 
-Elle permet ainsi l’utilisation des systèmes Cuda/OpenCL avec OCaml, l’unification de ces deux API se faisant via une liaison dynamique, ainsi que d’abstraire également les transferts de données entre le CPU et la carte graphique. 
+Elle permet ainsi l’utilisation des systèmes Cuda/OpenCL avec OCaml, l’unification de ces deux API se faisant via une liaison dynamique, ainsi que d’abstraire également les transferts de données entre le CPU et la carte graphique.\newline
 
-Enfin, elle permet aussi d’utiliser le typage statique afin de vérifier les noyaux de calcul, écrits en Sarek.
+Enfin, elle permet aussi d’utiliser le typage statique afin de vérifier les noyaux de calcul, écrits en Sarek.\newline
 
 Il existe deux solutions afin d’exprimer les noyaux :
 \begin{itemize}
@@ -44,8 +45,10 @@ Il existe deux solutions afin d’exprimer les noyaux :
 
 \end{itemize}
 
+
 \section{Les Squelettes de programmation}
-Les squelettes de programmation sont une forme de programmation, où il existe des éléments génériques pré-définis - tel que map, reduce, farm, pipe etc.... Ces squelettes peuvent être personnalisés grâce à du code utilisateur. 
+Les squelettes de programmation sont une forme de programmation, où il existe des éléments génériques pré-définis - tel que map, reduce, farm, pipe etc.... Ces squelettes peuvent être personnalisés grâce à du code utilisateur.\newline
+
 Les squelettes permettent une abstraction de haut niveau et aident les utilisateurs à implémenter des algorithmes complexes comme les algorithmes parallèles. Les algorithmes suivant sont généralement implémentés en tant que squelette dans les bibliothèques de programmation GPGPU.
 
 \begin{itemize}
@@ -59,19 +62,29 @@ Les squelettes permettent une abstraction de haut niveau et aident les utilisate
 \chapter{Présentation du sujet}
 
 \section{Introduction au domaine}
-La programmation GPGPU permet de profiter de l’architecture massivement parallèle du GPU. Le GPU possède une architecture SIMD (Single Instruction Multiple Data), proposant de nombreuse unités de calcul. 
+La programmation GPGPU permet de profiter de l’architecture massivement parallèle du GPU. Le GPU possède une architecture SIMD (Single Instruction Multiple Data), proposant de nombreuse unités de calcul.\newline
 
-Le GPU est decoupée en plusieurs TCP (Texture Processing Cluster), eux-même découpés en plusieurs SM. Les SM (Streaming Multi-processor) possèdent une mémoire locale, ils possèdent plusieurs SP (Streaming Processor) permettant des calculs sur nombres flottants, ainsi que des unités SFU (Special Function) permettant le calcul de fonctions spécifiques - cos, sin… . Une mémoire globale est la disposition de chacun des clusters mais est beaucoup plus lente que leur mémoire locale.
+Le GPU est decoupée en plusieurs TCP (Texture Processing Cluster), eux-même découpés en plusieurs SM. Les SM (Streaming Multi-processor) possèdent une mémoire locale, ils possèdent plusieurs SP (Streaming Processor) permettant des calculs sur nombres flottants, ainsi que des unités SFU (Special Function) permettant le calcul de fonctions spécifiques - cos, sin… . Une mémoire globale est la disposition de chacun des clusters mais est beaucoup plus lente que leur mémoire locale.\newline
+
+\begin{figure}
+\begin{center}
+\includegraphics[height=150]{image2.png}
+\end{center}
+\caption{Représentation d’une architecture GPU - ref : Introduction à la programmation GPGPU avec Cuda, Mathias Bourgoin & Sylvain Jubertie.}
+\label{test}
+\end{figure}
 
 L’architecture d’un GPU étant SIMD (Single Intruction Multiple Data), il n’est pas conseillé de créer des programmes complexes proposant beaucoup de conditions, ce qui ferait perdre l'intérêt parallèle de la carte, en effet certains coeurs seraient en attente la plupart du temps. 
 
 \section{Analyse de l'existant}
-Actuellement, la version de SPOC disponible permet déjà d’effectuer des calculs sur la carte graphique, que ce soit en utilisant Cuda ou OpenCL. Elle nous donne également le choix entre l’utilisation de noyaux Sarek ou bien en Cuda/OpenCL. De plus, SPOC met à notre disposition trois bibliothèques, Sarek en faisant partie, les autres permettant d’utiliser des kernels ecrits en cuda, ou opencl.
+Actuellement, la version de SPOC disponible permet déjà d’effectuer des calculs sur la carte graphique, que ce soit en utilisant Cuda ou OpenCL. Elle nous donne également le choix entre l’utilisation de noyaux Sarek ou bien en Cuda/OpenCL. De plus, SPOC met à notre disposition trois bibliothèques, Sarek en faisant partie, les autres permettant d’utiliser des kernels ecrits en cuda, ou opencl.\newline
 
 Sarek est un langage interne à Spoc permettant de définir des kernel dans un langage proche de ocaml. Ce langage est compilé par Kirc, qui en génère un code exécutable soit par cuda, soit par opencl en fonction de l’architecture de l’ordinateur hôte préalablement detectée.
-Spoc propose aussi une bibliothèque Compose, celle-ci permet déjà d’utiliser 3 squelettes : Map, Reduce et Pipe. Ces squelettes prennent en paramètre une fonction kernel codé en Cuda ou en Opencl. Le nombres de thread et de block de calcul à créer sur le GPU sont définis de matière automatique. 
 
-\section{Travaux à réaliser}  
+Spoc propose aussi une bibliothèque Compose, celle-ci permet déjà d’utiliser 3 squelette - Map, Reduce et Pipe. Ces squelettes prennent en paramètre une fonction kernel codé en Cuda ou en Opencl. Le nombres de thread et de block de calcul à créer sur le GPU sont définis de matière automatique. 
+  
+\chapter{Objectifs et organisation}
+
 Notre travail tout au long du projet consistera en :
 \begin{itemize}
 \item Modifier le langage Sarek.
@@ -100,8 +113,7 @@ let map = kern a b n ->
   let open Std in
   let idx = global_thread_in in
   if idx < n then
-    b.[<idx>] <- { a.[<idx>] }
-;;
+    b.[<idx>] <- a.[<idx>] + 1;;
 \end{lstlisting}
 
 Nous pourrons aussi, définir de nouveaux squelettes pour la bibliothèque d’extension Compose, mais l’utilisateur devra alors connaître les kernel Cuda ou OpenCL pour les utiliser. 
