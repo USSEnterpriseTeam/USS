@@ -64,15 +64,15 @@ Les squelettes permettent une abstraction de haut niveau et aident les utilisate
 \section{Introduction au domaine}
 La programmation GPGPU permet de profiter de l’architecture massivement parallèle du GPU. Le GPU possède une architecture SIMD (Single Instruction Multiple Data), proposant de nombreuse unités de calcul.\newline
 
-Le GPU est decoupée en plusieurs TCP (Texture Processing Cluster), eux-même découpés en plusieurs SM. Les SM (Streaming Multi-processor) possèdent une mémoire locale, ils possèdent plusieurs SP (Streaming Processor) permettant des calculs sur nombres flottants, ainsi que des unités SFU (Special Function) permettant le calcul de fonctions spécifiques - cos, sin… . Une mémoire globale est la disposition de chacun des clusters mais est beaucoup plus lente que leur mémoire locale.\newline
+Le GPU est decoupée en plusieurs TCP (Texture Processing Cluster), eux-même découpés en plusieurs SM. Les SM (Streaming Multi-processor) possèdent une mémoire locale, ils possèdent plusieurs SP (Streaming Processor) permettant des calculs sur nombres flottants, ainsi que des unités SFU (Special Function) permettant le calcul de fonctions spécifiques - cos, sin… . Une mémoire globale est la disposition de chacun des clusters mais est beaucoup plus lente que leur mémoire locale.
 
-\begin{figure}
+\begin{figure}[!h]
 \begin{center}
 \includegraphics[height=150]{image2.png}
 \end{center}
 \caption{Représentation d’une architecture GPU - ref : Introduction à la programmation GPGPU avec Cuda, Mathias Bourgoin & Sylvain Jubertie.}
 \label{test}
-\end{figure}
+\end{figure} \newline
 
 L’architecture d’un GPU étant SIMD (Single Intruction Multiple Data), il n’est pas conseillé de créer des programmes complexes proposant beaucoup de conditions, ce qui ferait perdre l'intérêt parallèle de la carte, en effet certains coeurs seraient en attente la plupart du temps. 
 
