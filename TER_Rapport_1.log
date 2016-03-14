@@ -1,15 +1,15 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.3.14)  14 MAR 2016 10:55
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.2.27)  14 MAR 2016 13:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **TER_Rapport_1.tex
 (./TER_Rapport_1.tex
-LaTeX2e <2015/01/01>
-Babel <3.9l> and hyphenation patterns for 2 languages loaded.
+LaTeX2e <2011/06/27>
+Babel <3.9h> and hyphenation patterns for 4 languages loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/base/report.cls
-Document Class: report 2014/09/29 v1.4h Standard LaTeX document class
+Document Class: report 2007/10/19 v1.4h Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
-File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
 \c@chapter=\count80
@@ -25,19 +25,19 @@ File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
 \bibindent=\dimen102
 )
 (/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
-Package: inputenc 2015/03/17 v1.2c Input encoding file
+Package: inputenc 2008/03/30 v1.1d Input encoding file
 \inpenc@prehook=\toks14
 \inpenc@posthook=\toks15
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2014/09/29 v1.1m UTF-8 support for inputenc
+File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
 Now handling font encoding OML ...
 ... no UTF-8 mapping file for font encoding OML
 Now handling font encoding T1 ...
 ... processing UTF-8 mapping file for font encoding T1
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.dfu
-File: t1enc.dfu 2014/09/29 v1.1m UTF-8 support for inputenc
+File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A1 (decimal 161)
    defining Unicode char U+00A3 (decimal 163)
    defining Unicode char U+00AB (decimal 171)
@@ -187,7 +187,7 @@ Now handling font encoding OT1 ...
 ... processing UTF-8 mapping file for font encoding OT1
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/ot1enc.dfu
-File: ot1enc.dfu 2014/09/29 v1.1m UTF-8 support for inputenc
+File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A1 (decimal 161)
    defining Unicode char U+00A3 (decimal 163)
    defining Unicode char U+00B8 (decimal 184)
@@ -218,7 +218,7 @@ Now handling font encoding OMS ...
 ... processing UTF-8 mapping file for font encoding OMS
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/omsenc.dfu
-File: omsenc.dfu 2014/09/29 v1.1m UTF-8 support for inputenc
+File: omsenc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A7 (decimal 167)
    defining Unicode char U+00B6 (decimal 182)
    defining Unicode char U+00B7 (decimal 183)
@@ -246,17 +246,17 @@ Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.def
 File: t1enc.def 2005/09/27 v1.99g Standard LaTeX file
-LaTeX Font Info:    Redeclaring font encoding T1 on input line 48.
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
-Package: graphicx 2014/10/28 v1.0g Enhanced LaTeX Graphics (DPC,SPQR)
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
-Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
 \KV@toks@=\toks16
 )
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
-Package: graphics 2014/10/28 v1.0p Standard LaTeX Graphics (DPC,SPQR)
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
@@ -264,7 +264,7 @@ Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 (/usr/share/texlive/texmf-dist/tex/latex/latexconfig/graphics.cfg
 File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
 )
-Package graphics Info: Driver file: pdftex.def on input line 94.
+Package graphics Info: Driver file: pdftex.def on input line 91.
 
 (/usr/share/texlive/texmf-dist/tex/latex/pdftex-def/pdftex.def
 File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
@@ -295,24 +295,24 @@ Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
 \lst@maxwidth=\dimen108
 
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
-File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
+File: lstmisc.sty 2013/08/26 1.5b (Carsten Heinz)
 \c@lstnumber=\count95
 \lst@skipnumbers=\count96
 \lst@framebox=\box27
 )
 (/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg
-File: listings.cfg 2015/06/04 1.6 listings configuration
+File: listings.cfg 2013/08/26 1.5b listings configuration
 ))
-Package: listings 2015/06/04 1.6 (Carsten Heinz)
+Package: listings 2013/08/26 1.5b (Carsten Heinz)
 
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2015/06/04 1.6 listings language file
+File: lstlang1.sty 2013/08/26 1.5b listings language file
 )
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang2.sty
-File: lstlang2.sty 2015/06/04 1.6 listings language file
+File: lstlang2.sty 2013/08/26 1.5b listings language file
 )
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
-File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
+File: lstmisc.sty 2013/08/26 1.5b (Carsten Heinz)
 )
 (./TER_Rapport_1.aux)
 \openout1 = `TER_Rapport_1.aux'.
@@ -443,7 +443,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 36--37
 
 LaTeX Font Info:    Try loading font information for OMS+cmr on input line 41.
 (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
-File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 41.
@@ -514,27 +514,51 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 96.
 [5
 
-] [6] (./TER_Rapport_1.aux) ) 
+] (./TER_Rapport_1.bbl [6]
+! Misplaced alignment tab character &.
+l.4 ...mmation GPGPU avec Cuda, Mathias Bourgoin &
+                                                  
+? 
+
+Underfull \hbox (badness 10000) in paragraph at lines 12--14
+[]\T1/cmr/m/it/10 Skeleton Pro-gram-ming for Het-ero-ge-neous GPU-based Sys-tem
+s\T1/cmr/m/n/10 .
+ []
+
+! You can't use `macro parameter character #' in horizontal mode.
+l.22 ...omputing\_on\_graphics\_processing\_units#
+                                                  Map.
+? 
+
+Underfull \hbox (badness 10000) in paragraph at lines 20--23
+[]\T1/cmr/m/it/10 The map op-er-a-tion\T1/cmr/m/n/10 .  https://en.wikipedia.or
+g/wiki/General-
+ []
+
+) [7
+
+] (./TER_Rapport_1.aux) ) 
 Here is how much of TeX's memory you used:
- 3727 strings out of 495000
- 48751 string characters out of 6181169
- 125020 words of memory out of 5000000
- 6921 multiletter control sequences out of 15000+600000
- 13314 words of font info for 32 fonts, out of 8000000 for 9000
+ 3733 strings out of 494999
+ 48798 string characters out of 6180228
+ 124809 words of memory out of 5000000
+ 6906 multiletter control sequences out of 15000+600000
+ 14772 words of font info for 34 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  38i,6n,49p,558b,1086s stack positions out of 5000i,500n,10000p,200000b,80000s
- </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/
-ec/ecbx1000.600pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000
-.600pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> </h
-ome/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx2488.600pk> </home/emile/.
-texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx2074.600pk> </home/emile/.texmf-var/f
-onts/pk/ljfour/jknappen/ec/ecrm1200.600pk> </home/emile/.texmf-var/fonts/pk/ljf
-our/jknappen/ec/ecrm1728.600pk></usr/share/texlive/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmsy10.pfb>
-Output written on TER_Rapport_1.pdf (7 pages, 112272 bytes).
+ </home/guidono/.texmf-var/fonts/pk/ljfour/jknappen/ec
+/ecti1000.600pk> </home/guidono/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000
+.600pk> </home/guidono/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> <
+/home/guidono/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> </home/gui
+dono/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx2488.600pk> </home/guidono/.tex
+mf-var/fonts/pk/ljfour/jknappen/ec/ecbx2074.600pk> </home/guidono/.texmf-var/fo
+nts/pk/ljfour/jknappen/ec/ecrm1200.600pk> </home/guidono/.texmf-var/fonts/pk/lj
+four/jknappen/ec/ecrm1728.600pk></usr/share/texlive/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmsy10.pfb>
+Output written on TER_Rapport_1.pdf (8 pages, 127701 bytes).
 PDF statistics:
- 248 PDF objects out of 1000 (max. 8388607)
- 50 compressed objects within 1 object stream
+ 301 PDF objects out of 1000 (max. 8388607)
+ 56 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

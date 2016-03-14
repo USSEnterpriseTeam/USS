@@ -19,7 +19,7 @@
 \chapter{Introduction}
 
 \section{La Programmation GPGPU}
-La programmation GPGPU (General Purpose on Graphic Processing Units), est un principe informatique visant à utiliser le processeur graphique comme processeur de calcul générique. L’objectif étant de bénéficier de l’architecture massivement parallèle d’un processeur graphique et ainsi résoudre des problèmes pour lesquels nous avons des algorithmes parallèles efficaces.\newline
+La programmation GPGPU\cite{refProgGPGPU} (General Purpose on Graphic Processing Units), est un principe informatique visant à utiliser le processeur graphique comme processeur de calcul générique. L’objectif étant de bénéficier de l’architecture massivement parallèle d’un processeur graphique et ainsi résoudre des problèmes pour lesquels nous avons des algorithmes parallèles efficaces.\newline
 
 En effet le processeur graphique possède une capacité de calcul beaucoup plus grande que celle d’un processeur classique. Pour peu qu’il existe un algorithme parallèle pour un problème donné. La programmation GPGPU n’est applicable qu’avec utilisation des pilotes et des bibliothèques associées. Ces pilotes et bibliothèques généralement proposés par les constructeurs de processeur (ex: Intel, Nvidia, …) permettent la programmation sur la carte graphique pour des informaticiens chevronnés.\newline 
 
@@ -29,7 +29,7 @@ Les bibliothèques proposent la création de noyaux  (kernel), fonction exécut�
 La programmation GPGPU étant d’assez bas-niveaux, il existe des bibliothèques permettant d’abstraire certains principes, comme la gestion mémoire. 
 
 \section{SPOC}
-SPOC, Stream Processing with OCaml est une bibliothèque qui propose une abstraction pour la programmation GPGPU. Son principal but est de fournir une solution portable, multi-GPGPU, et hétérogène tout en gardant de hautes performances.\newline
+SPOC\cite{refSpoc}, Stream Processing with OCaml est une bibliothèque qui propose une abstraction pour la programmation GPGPU. Son principal but est de fournir une solution portable, multi-GPGPU, et hétérogène tout en gardant de hautes performances.\newline
 
 Elle permet ainsi l’utilisation des systèmes Cuda/OpenCL avec OCaml, l’unification de ces deux API se faisant via une liaison dynamique, ainsi que d’abstraire également les transferts de données entre le CPU et la carte graphique.\newline
 
@@ -47,12 +47,12 @@ Il existe deux solutions afin d’exprimer les noyaux :
 
 
 \section{Les Squelettes de programmation}
-Les squelettes de programmation sont une forme de programmation, où il existe des éléments génériques pré-définis - tel que map, reduce, farm, pipe etc.... Ces squelettes peuvent être personnalisés grâce à du code utilisateur.\newline
+Les squelettes de programmation\cite{refSkeleton} sont une forme de programmation, où il existe des éléments génériques pré-définis - tel que map, reduce, farm, pipe etc.... Ces squelettes peuvent être personnalisés grâce à du code utilisateur.\newline
 
-Les squelettes permettent une abstraction de haut niveau et aident les utilisateurs à implémenter des algorithmes complexes comme les algorithmes parallèles. Les algorithmes suivant sont généralement implémentés en tant que squelette dans les bibliothèques de programmation GPGPU.
+Les squelettes\cite{refSkePU} permettent une abstraction de haut niveau et aident les utilisateurs à implémenter des algorithmes complexes comme les algorithmes parallèles. Les algorithmes suivant sont généralement implémentés en tant que squelette dans les bibliothèques de programmation GPGPU.
 
 \begin{itemize}
-\item map - applique une fonction donnée à toutes les entrées d’un tableau.
+\item map\cite{refMap} - applique une fonction donnée à toutes les entrées d’un tableau.
 \item reduce - réduction d’un tableau dans une variable, en fonction d’un operateur donné.
 \item sort - tri un ensemble d’élément à l’aide d’une relation d’ordre donné.
 \item stream-filtering - applique la même opération que le reduce mais en écartant quelque élément selon un critère donné.
@@ -124,7 +124,7 @@ Nous pourrons aussi, définir de nouveaux squelettes pour la bibliothèque d’e
 \item Réaliser une documentation.
 \end{itemize}
 
-%\bibliographystyle{plain}
-%\bibliography{biblio}
+\bibliographystyle{unsrt}
+\bibliography{biblio}
 
 \end{document}
