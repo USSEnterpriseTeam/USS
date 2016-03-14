@@ -46,6 +46,7 @@ Il existe deux solutions afin d’exprimer les noyaux :
 
 \section{Présentation des Squelettes de programmation}
 Les squelettes de programmation sont une forme de programmation, ou il existe des éléments générique pré-définis - tel que map, reduce, farm, pipe etc.... Ces squelettes peuvent être personnalisé grâce à du code utilisateur. 
+
 Les squelettes permettent une abstraction de haut niveau et aident les utilisateurs à implémenter des algorithmes complexe comme les algorithmes parallèles. Les algorithmes suivant sont généralement implémenté en tant que squelette dans les bibliothèque de programmation GPGPU.
 
 \begin{itemize}
@@ -71,6 +72,8 @@ Actuellement, la version de SPOC disponible permet déjà d’effectuer des calc
 Sarek est un langage interne à Spoc permettant de définir des kernel dans un langage proche de ocaml. Ce langage est compilé par Kirc, qui en génère un code exécutable soit par cuda, soit par opencl en fonction de l’architecture de l’ordinateur hôte préalablement detectée.
 Spoc propose aussi une bibliothèque Compose, celle-ci permet déjà d’utiliser 3 squelette - Map, Reduce et Pipe. Ces squelettes prennent en paramètre une fonction kernel codé en Cuda ou en Opencl. Le nombres de thread et de block de calcul à créer sur le GPU sont définis de matière automatique. 
   
+\chapter{Objectifs et organisation}
+
 Notre travail tout au long du projet consistera en :
 \begin{itemize}
 \item Modifier le langage Sarek.
