@@ -11,7 +11,7 @@ let a_to_vect = function
   | FloatVar (i,s) -> (new_float_vec_var (i) s)
   | a  -> print_ast a; failwith "a_to_vect"
 
-let a_to_return_vect k1 k2 idx= 
+let a_to_return_vect k1 k2 idx=
   match k1 with
   | IntVar (i,s)  ->  (set_vect_var (get_vec (var i s) idx) (k2) )
   | FloatVar (i,s)  ->  (set_vect_var (get_vec (var i s) idx) (k2))

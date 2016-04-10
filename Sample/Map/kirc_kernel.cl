@@ -17,6 +17,11 @@ int spoc_xor (int a, int b ) { return (a^b);}
 
 /************* FUNCTION PROTOTYPES ******************/
 /************* FUNCTION DEFINITIONS ******************/
-__kernel void spoc_dummy ( __global int* a, __global int* b ) {
-  [get_global_id(0)] = spoc_var0[get_global_id(0)] + 1;
+__kernel void spoc_dummy ( __global int* a, int n, __global int* b ) {
+  int x;
+  x = get_global_id(0) ;
+  if (x < n){
+    b[x] = a + 1;
+  }  
+  
 }
