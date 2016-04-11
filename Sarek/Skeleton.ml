@@ -13,6 +13,8 @@ let arg_of_vec v  =
   match Vector.kind v with
   | Vector.Int32 _ -> Kernel.VInt32 v
   | Vector.Float32 _ -> Kernel.VFloat32 v
+  | Vector.Float64 _ -> Kernel.VFloat64 v
+  | Vector.Int64 _ -> Kernel.VInt64 v
   | _ -> assert false
 
 let arg_of_int i =
@@ -142,11 +144,16 @@ let fill_skel_node (params: k_ext) (user_body: k_ext) (trans: (string * string) 
       | Mul (a, b) -> Mul (aux a, aux b)
       | Div (a, b) -> Div (aux a, aux b)
       | Mod (a, b) -> Mod (aux a, aux b)
+      | Plusf (a, b) -> Plusf (aux a, aux b)
+      | Mulf (a, b) -> Mulf (aux a, aux b)
+      | Minf (a, b) -> Minf (aux a, aux b)
+      | Divf (a, b) -> Divf (aux a, aux b)
       | LtBool (a, b) -> LtBool (aux a, aux b)
       | GtBool (a, b) -> GtBool (aux a, aux b)
       | If (a, b) -> If (aux a, aux b)
       | Ife (a, b, c) -> Ife (aux a, aux b, aux c)
       | Int a -> Int a
+      | Float a -> Float a
       | IntId (v, i) -> translate_id v params trans
       | a -> print_ast a; assert false
       )
@@ -256,8 +263,8 @@ let map_skel =
      in
      let id_a = IntId  ("a", (0)) in
      let id_b = IntId ("b", (2)) in
-     let id_n = IntId ("n", (4)) in
-     let id_x = IntId ("x", (1)) in
+     let id_n = IntId ("n", (1)) in
+     let id_x = IntId ("x", (4)) in
      let vec_acc_a = IntVecAcc (id_a, id_x) in
      let vec_acc_b = IntVecAcc (id_b, id_x) in
      let skel_args = Skel (Concat ( vec_acc_a, ( Concat ( vec_acc_b, (empty_arg()) )))) in
