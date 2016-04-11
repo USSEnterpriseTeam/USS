@@ -276,10 +276,14 @@ let mapTest ((ker: ('a, 'b, ('c -> 'd), 'e, 'f) sarek_kernel)) ?dev:(device=(Spo
        | Devices.CudaInfo _ -> Devices.Cuda
        | Devices.OpenCLInfo _ -> Devices.OpenCL in
 
-     ignore(gen ~only:target res);
+     
+     (*ignore(gen ~only:target res); 
+        a quoi ca sert ?? *)
+    
+     
      let spoc_ker, kir_ker = res in
      let open Kernel in
-     spoc_ker#compile ~debug:true device;
+     spoc_ker#compile ~debug:false device;
      let (block, grid ) = thread_creation device vec_in in
      let bin = (Hashtbl.find (spoc_ker#get_binaries ()) device) in
      let offset = ref 0 in

@@ -11,7 +11,7 @@ for i = 0 to Vector.length a - 1 do
   Spoc.Mem.set a i (r);
 done;;
 
-let b = mapTest(kern a -> a +. 1.) a;;
+let b = mapTest(kern a -> if (a <. 50.) then a +. 1. else a) a;;
 
 for i = 0 to Vector.length a - 1 do
   Printf.printf "%f -> " (Spoc.Mem.get a i);
