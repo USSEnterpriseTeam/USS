@@ -21,7 +21,7 @@ __kernel void spoc_dummy ( __global float* a, int n, __global float* b ) {
   int x;
   x = get_global_id(0) ;
   if (x < n){
-    b[x] = a[x] * 1.f;
+    b[x] = a[x] + 1.f;
   }  
   
 }
