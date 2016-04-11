@@ -2,12 +2,10 @@ open Spoc
 open Kirc
 open Kirc_Ast
 
-
 let rec print_l (l : (string*string) list) =
   match l with
   | (ancien, nouveau)::queue -> Printf.printf "%s -> %s" ancien nouveau; print_l queue
   | [] -> Printf.printf "\n"
-
 
 let arg_of_vec v  =
   match Vector.kind v with
@@ -19,24 +17,16 @@ let arg_of_vec v  =
 
 let arg_of_int i =
   Kernel.Int32 i
-     
-let a_to_vect = function
-  | IntVar (i,s)  -> (new_int_vec_var (i) "b")
-  | FloatVar (i,s) -> (new_float_vec_var (i) s)
-  | a  -> print_ast a; failwith "a_to_vect"
-
+    
 let a_to_vect_name a name =
   match a with
   | IntVar (i, _) -> (new_int_vec_var (i) name)
   | FloatVar (i, _) -> (new_float_vec_var (i) name)
   | a -> print_ast a; failwith "a_to_vect name"
     
-let a_to_return_vect k1 k2 idx =
-  match k1 with
-  | IntVar (i,s)  ->  (set_vect_var (get_vec (var i s) idx) (k2) )
-  | FloatVar (i,s)  ->  (set_vect_var (get_vec (var i s) idx) (k2) )
-  | _  -> failwith "error a_to_return_vect"
-
+(*
+  Retourne le nom d'une declaration de variable
+*)
 let param_name (var: k_ext) =
   match var with
   | VecVar (t, i, s) -> s
@@ -44,6 +34,11 @@ let param_name (var: k_ext) =
   | FloatVar(i, s) -> s
   | a -> print_ast a; failwith "TODO"   
 
+(*
+  Ajoute les arguments supplementaire du squelette
+  @param var les arguments du squelette restant
+  @param ret le type de retour du kernel
+*)
 let suite_args (var: k_ext) (ret) =
   let rec aux elem = 
     match elem with
@@ -59,7 +54,14 @@ let suite_args (var: k_ext) (ret) =
        )
     | a -> print_ast a; failwith "not enough args in user kernel -> retour_args"
   in aux (var)
-    
+
+
+(*
+  Change les parametres du squelette par des parametre avec le bon type
+  @param skel_args les arguments du squelette
+  @param user_args les arguments de l'ast utilisateur
+  @param ret le type de retour du kernel
+*)
 let translation_create (skel_args: k_ext) (user_args: k_ext) (ret) =
   let new_args args1 args2 = 
     match (args1, args2) with
@@ -87,22 +89,12 @@ let translation_create (skel_args: k_ext) (user_args: k_ext) (ret) =
   let (list, ret) = new_args skel_args user_args in
   (list, params (ret))
     
-let param_creation (body: k_ext) (ret)  =
-  match body with
-  | Kern(args, _) ->
-     (let new_args =
-       match args with
-       | Params p ->
-	  (match p with
-	  | Concat (Concat _, Concat _) ->  failwith "error multiple args" (*demander pk?*)
-	  | Concat (a, Empty) -> params (concat (a_to_vect a) (concat (a_to_vect (fst ret)) (empty_arg())))
-	  | _ -> print_ast args; failwith "type error")
-       | _ -> failwith "error args"
-      in new_args
-     )
-  | _ -> failwith "malformerd kernel map"
-
-(* L'ordre des elements dans le noeud squelette n'est pas important *)
+(*
+  Recupere un element dans les parametres du Skel en fonction du nom dans les parametres de l'ast utilisateur
+  @param name le nom dans l'ast utilisateur
+  @param params les parametres du noeud Skel
+  @param trans la table de traduction
+*)
 let translate_id (name: string) (params: k_ext) (trans: (string * string) list) =
   let rec find list  =
     match list with
@@ -129,7 +121,13 @@ let translate_id (name: string) (params: k_ext) (trans: (string * string) list) 
        )
     | a -> print_ast a; failwith "find_ancien"
   in find_ancien params
-     
+
+(*
+  Remplace un noeud de type Skel par l'ast de l'utilisateur
+  @param les parametres du noeud Skel 
+  @param user_body l'ast de l'utilisateur
+  @param trans la table de traduction
+*)
 let fill_skel_node (params: k_ext) (user_body: k_ext) (trans: (string * string) list) =
   let n_skel =
     let rec aux current =
@@ -159,7 +157,14 @@ let fill_skel_node (params: k_ext) (user_body: k_ext) (trans: (string * string) 
       )
     in aux user_body
   in n_skel
-     
+
+(*
+  Parcours un squelette et remplace ce qu'il faut
+  @param skel_body le squelette
+  @param user_body l'ast renseigne par l'utilisateur
+  @param trans la table de translation des variable
+  @return le corp de l'ast
+*)
 let skel_body_creation (skel_body: k_ext) (user_body: k_ext) (trans: (string * string) list) =
   let n_body =
     let rec aux current =
@@ -185,39 +190,9 @@ let skel_body_creation (skel_body: k_ext) (user_body: k_ext) (trans: (string * s
     in aux skel_body
   in n_body
   
-     
-let body_creation (body: k_ext) (ret) =
-  match body with
-  | Kern (_, body) ->
-     (let (cuda_name, opencl_name) = ("blockIdx.x*blockDim.x+threadIdx.x", "get_global_id(0)") in  
-      let n_body =
-	let rec aux current = 
-	  (match current with
-	  | Return (a) -> a_to_return_vect (fst ret) (aux a) ((intrinsics cuda_name opencl_name))
-	  | Seq (a,b) -> seq a (aux b)
-	  | Local (a,b) -> Local (a, aux b)
-	  | Plus (a,b)  -> Plus (aux a, aux b)
-	  | Min (a,b)  -> Min  (aux a, aux b)
-	  | Mul (a,b)  -> Mul  (aux a, aux b)
-	  | Div (a,b)  -> Div  (aux a, aux b)
-	  | Mod (a,b)  -> Mod  (aux a, aux b)
-	  | LtBool (a,b)  -> LtBool (aux a, aux b)
-	  | GtBool (a,b)  -> GtBool (aux a, aux b)
-	  | Ife (a,b,c)  -> Ife (aux a, aux b, aux c)
-	  | Int a -> Int a
-	  | IntId (v,i)  -> 
-	     if i = 0 then
-	       IntVecAcc(IdName ("spoc_var" ^ (string_of_int i)),
-			 Intrinsics ((cuda_name, opencl_name)) )
-	     else
-	       current
-	  | a -> print_ast a; assert false)
-	in aux body
-      in n_body
-     )
-  | _ -> failwith "malformed kernel map"
-
-     
+(*
+  Creer le kernel compilable
+*)
 let res_creation (ker2, k) (k1) (param, body) (k3) =
   (ker2,
    {
@@ -228,6 +203,10 @@ let res_creation (ker2, k) (k1) (param, body) (k3) =
    })
     
 
+(*
+  Calcule la taille des block necessaire sur un tableau a une entree
+  @retour (block, grid)
+*)
 let thread_creation (device) (vec_in) =
   let open Kernel in
   let block = {blockX = 1; blockY = 1; blockZ = 1}
@@ -255,6 +234,9 @@ let thread_creation (device) (vec_in) =
   end;
   (block, grid)
 
+(*
+  Retourne l'Ast d'un squelette de map
+*)
 let map_skel =
      let (cuda_name, opencl_name) = ("blockIdx.x*blockDim.x+threadIdx.x", "get_global_id(0)") in  
      let params = params (concat (new_int_vec_var (0) "a")
