@@ -115,7 +115,7 @@ let translate_id (name: string) (params: k_ext) (trans: (string * string) list) 
     match param with
     | Concat (a, b) ->
        (match a with
-       | IntVecAcc ( IdName (name), _) ->
+       | IntVecAcc ( IntId (name, _), _) ->
 	  if (ancien = name) then
 	    a
 	  else
@@ -254,10 +254,10 @@ let map_skel =
 				(concat (new_int_var (1) "n")
 				   (concat (new_int_vec_var (2) "b") (empty_arg()))))
      in
-     let id_a = IdName "a" in
-     let id_b = IdName "b" in
-     let id_n = IdName "n" in
-     let id_x = IdName "x" in
+     let id_a = IntId  ("a", (0)) in
+     let id_b = IntId ("b", (2)) in
+     let id_n = IntId ("n", (4)) in
+     let id_x = IntId ("x", (1)) in
      let vec_acc_a = IntVecAcc (id_a, id_x) in
      let vec_acc_b = IntVecAcc (id_b, id_x) in
      let skel_args = Skel (Concat ( vec_acc_a, ( Concat ( vec_acc_b, (empty_arg()) )))) in
