@@ -1,0 +1,39 @@
+Kern
+  Params
+    Concat
+      VecVar 0 ->a
+      Concat
+        IntVar 1 -> n
+        Concat
+          VecVar 2 ->b
+          Empty
+  Local
+    Decl
+      IntVar 4 -> x
+    Seq
+      Set
+        IntId x 4
+        IntrinsicsblockIdx.x*blockDim.x+threadIdx.x get_global_id(0)
+      If
+        LtBool
+          IntId x 4
+          IntId n 1
+        SetV
+          IntVecAcc
+            IntId b 2
+            IntId x 4
+          Mulf
+            IntVecAcc
+              IntId a 0
+              IntId x 4
+            Float 1.
+92.603889 -> 0.000000 
+34.163859 -> 3.361734 
+59.782295 -> 1632519323648.000000 
+86.688159 -> 3.016905 
+78.666803 -> 0.001204 
+62.531502 -> 3.217049 
+9.098898 -> -65227776.000000 
+31.100997 -> 3.338625 
+55.974220 -> -4320119375671720096563200.000000 
+15.384785 -> 3.307292 
