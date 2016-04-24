@@ -3,7 +3,6 @@ open Kirc
 
 open Skeleton
 
-
 let a = Vector.create Vector.float32 10;;
 let b = Vector.create Vector.float32 10;;
 

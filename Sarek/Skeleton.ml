@@ -17,6 +17,14 @@ let arg_of_vec v  =
 
 let arg_of_int i =
   Kernel.Int32 i
+
+
+let a_to_simple_name a name =
+  match a with
+  | IntVar(i, _) -> (new_int_var (i) name)
+  | FloatVar(i, _) -> (new_float_var (i) name)
+  | a -> print_ast a; failwith "a_to_simple"
+
     
 let a_to_vect_name a name =
   match a with
@@ -55,14 +63,29 @@ let suite_args (var: k_ext) (ret) =
     | a -> print_ast a; failwith "not enough args in user kernel -> retour_args"
   in aux (var)
 
-
+let suite_args_simple (var: k_ext) (ret) =
+  let rec aux elem =
+    match elem with
+    | Concat (a, b) ->
+       (match b with
+       | Concat _ ->
+	  let (list, suite) = aux b in	  
+	  (list, concat (a) suite)
+       | Empty ->
+	  let name = param_name a in	  
+	  (("ret_val", name) :: [], concat (a_to_simple_name (fst ret) name) (empty_arg()))
+       | a -> print_ast a; failwith "malformed skeleton" 
+       )
+    | a -> print_ast a; failwith "not enough args in user kernel -> retour_args"
+  in aux (var)
+  
 (*
   Change les parametres du squelette par des parametre avec le bon type
   @param skel_args les arguments du squelette
   @param user_args les arguments de l'ast utilisateur
   @param ret le type de retour du kernel
 *)
-let translation_create (skel_args: k_ext) (user_args: k_ext) (ret) =
+let translation_create_vec (skel_args: k_ext) (user_args: k_ext) (ret) =
   let new_args args1 args2 = 
     match (args1, args2) with
     | (Params p1, Params p2) ->
@@ -79,6 +102,33 @@ let translation_create (skel_args: k_ext) (user_args: k_ext) (ret) =
 	       let ancien = param_name a1 in
 	       let nouveau = param_name a2 in
 	       let (list, ret) = suite_args suite ret in
+	       ((nouveau, ancien) :: list,  concat (a_to_vect_name a2 ancien) ret)
+	    | (x1, x2) -> print_ast x1; print_ast x2; failwith "translation_create"
+	    )
+	 | _ -> failwith "")
+       in aux p1 p2
+    |_ -> failwith "malformed params"
+  in
+  let (list, ret) = new_args skel_args user_args in
+  (list, params (ret))
+
+let translation_create_simple (skel_args: k_ext) (user_args: k_ext) (ret) =
+  let new_args args1 args2 = 
+    match (args1, args2) with
+    | (Params p1, Params p2) ->
+       let rec aux p1 p2 =
+	 (match (p1, p2) with
+	 | (Concat (a1, b1), Concat(a2, b2)) ->
+	    (match (b1, b2) with
+	    | (Concat _, Concat _) ->
+	       let ancien = param_name a1 in
+	       let nouveau = param_name a2 in
+	       let (list, ret) = (aux b1 b2) in
+	       ((nouveau, ancien) :: list, concat (a_to_vect_name a2 ancien) ret)
+	    | (suite, Empty) ->
+	       let ancien = param_name a1 in
+	       let nouveau = param_name a2 in
+	       let (list, ret) = suite_args_simple suite ret in
 	       ((nouveau, ancien) :: list,  concat (a_to_vect_name a2 ancien) ret)
 	    | (x1, x2) -> print_ast x1; print_ast x2; failwith "translation_create"
 	    )
@@ -283,13 +333,13 @@ let map2_skel =
   (params, body)
   
 
-let map2  ((ker: ('a, 'b,('c -> 'd -> 'e), 'f,'g) sarek_kernel)) ?dev:(device=(Spoc.Devices.init ()).(0)) (vec_in1 : ('c, 'i) Vector.vector) (vec_in2 : ('d, 'k) Vector.vector) : ('e, 'm) Vector.vector =
+let map2  ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=(Spoc.Devices.init ()).(0)) (vec_in1 : ('c, 'i) Vector.vector) (vec_in2 : ('d, 'k) Vector.vector) : ('e, 'm) Vector.vector =
   let ker2, k = ker in
   let (k1, k2, k3) = (k.ml_kern, k.body, k.ret_val) in
   match k2 with
   | Kern (param, body) ->
      let (skel_param, skel_body) = map2_skel in
-     let (trans, final_params) = translation_create skel_param param k3 in
+     let (trans, final_params) = translation_create_vec skel_param param k3 in
      let final_body = skel_body_creation skel_body body trans in
 
      let ml_kern = (let map2 = fun f k a b ->
@@ -312,9 +362,9 @@ let map2  ((ker: ('a, 'b,('c -> 'd -> 'e), 'f,'g) sarek_kernel)) ?dev:(device=(S
        match device.Devices.specific_info with
        | Devices.CudaInfo _ -> Devices.Cuda
        | Devices.OpenCLInfo _ -> Devices.OpenCL in
+
      ignore(gen ~only:target res); 
-     (*affiche l'ast je sais pas pk.
-     *)
+     (* affiche l'ast je sais pas pk. *)
 
      let spoc_ker, kir_ker = res in
      let open Kernel in
@@ -356,7 +406,7 @@ let map ((ker: ('a, 'b, ('c -> 'd), 'e, 'f) sarek_kernel)) ?dev:(device=(Spoc.De
      let (skel_param, skel_body) = map_skel  in
 
      (*Transformation des parametres et recuperation de la table de traduction*)
-     let (trans, final_params) = translation_create skel_param param k3 in
+     let (trans, final_params) = translation_create_vec skel_param param k3 in
 
      (* Transformation de l'ast du squelette en fonction de l'ast de l'utilisateur *)
      let final_body = skel_body_creation skel_body body trans in
