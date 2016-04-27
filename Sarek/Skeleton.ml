@@ -178,12 +178,12 @@ let translate_id (name: string) (params: k_ext) (trans: (string * string) list) 
   @param user_body l'ast de l'utilisateur
   @param trans la table de traduction
 *)
-let fill_skel_node (params: k_ext) (user_body: k_ext) (trans: (string * string) list) =
+let fill_skel_node (params: k_ext) (name: string)(user_body: k_ext) (trans: (string * string) list) =
   let n_skel =
     let rec aux current =
       ( match current with
       | Return (a) ->
-	 let ret = translate_id "ret_val" params trans in
+	 let ret = translate_id name params trans in
 	 set_vect_var (ret) (aux a)
       | Seq(a, b) -> seq a (aux b)
       | Local (a, b) -> Local (a, aux b)
@@ -233,7 +233,7 @@ let skel_body_creation (skel_body: k_ext) (user_body: k_ext) (trans: (string * s
       | Int a -> Int a
       | IntId (v, i) -> IntId (v, i)
       | Id (v) -> Id (v)
-      | Skel (a) -> fill_skel_node a user_body trans
+      | Skel (a, b) -> fill_skel_node a b user_body trans
       | IdName (v) -> IdName (v) 
       | a -> print_ast a; assert false
       )
@@ -299,7 +299,7 @@ let map_skel =
      let id_x = IntId ("x", (4)) in
      let vec_acc_a = IntVecAcc (id_a, id_x) in
      let vec_acc_b = IntVecAcc (id_b, id_x) in
-     let skel_args = Skel (Concat ( vec_acc_a, ( Concat ( vec_acc_b, (empty_arg()) )))) in
+     let skel_args = Skel (Concat ( vec_acc_a, ( Concat ( vec_acc_b, (empty_arg()) ))), "ret_val") in
      let body = Local ( (Decl (new_int_var (4) "x") ),
 			     Seq
 			       (Set (id_x , Intrinsics ((cuda_name, opencl_name)) ),
@@ -323,7 +323,7 @@ let map2_skel =
   let vec_acc_a = IntVecAcc (id_a, id_x) in
   let vec_acc_b = IntVecAcc (id_b, id_x) in
   let vec_acc_c = IntVecAcc (id_c, id_x) in 
-  let skel_args = Skel (Concat ( vec_acc_a, ( Concat ( vec_acc_b, ( Concat (vec_acc_c, (empty_arg()) )))))) in
+  let skel_args = Skel (Concat ( vec_acc_a, ( Concat ( vec_acc_b, ( Concat (vec_acc_c, (empty_arg()) ))))), "ret_val") in
   let body = Local ( (Decl (new_int_var (4) "x") ),
 		     Seq
 		       (Set (id_x , Intrinsics ((cuda_name, opencl_name)) ),
