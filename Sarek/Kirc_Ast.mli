@@ -77,7 +77,7 @@ type k_ext =
   | GInt of (unit -> int32)
   | GFloat of (unit -> float)
   | Unit
-  | Skel of k_ext * string
+  | Skel of k_ext * k_ext
       
 and case = int * (string*string*int) option * k_ext
 

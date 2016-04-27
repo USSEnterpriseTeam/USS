@@ -119,7 +119,7 @@ type  k_ext =
   | GInt of (unit -> int32)
   | GFloat of (unit -> float)
   | Unit
-  | Skel of k_ext * string
+  | Skel of k_ext * k_ext
   
 
 and case =  int * (string*string*int) option * k_ext
@@ -352,7 +352,8 @@ let print_ast a =
       aux (i+1) e1;
       Array.iter (fun (_,_,a) -> aux (i+1) a) l
     | Skel (a, b) ->
-       print i ("Skel "^b^ " <- ");
+       print i ("Skel");
+      aux (i+1) b;
       aux (i+1) a;
 	
   in aux 0 a;;

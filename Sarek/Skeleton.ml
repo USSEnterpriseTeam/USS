@@ -35,11 +35,13 @@ let a_to_vect_name a name =
 (*
   Retourne le nom d'une declaration de variable
 *)
-let param_name (var: k_ext) =
+let rec param_name (var: k_ext) =
   match var with
   | VecVar (t, i, s) -> s
   | IntVar (i, s) -> s
+  | IntId (s, i) -> s
   | FloatVar(i, s) -> s
+  | IntVecAcc (a, b) -> param_name a
   | a -> print_ast a; failwith "TODO"   
 
 (*
@@ -138,6 +140,43 @@ let translation_create_simple (skel_args: k_ext) (user_args: k_ext) (ret) =
   in
   let (list, ret) = new_args skel_args user_args in
   (list, params (ret))
+
+
+(*
+  Creer une table de translation pour les parametres d'un noeud de tye skel
+  @param skel_args le noeud de type Skel
+  @param user_args le noeud de type Params
+*)
+let translation_create_only (skel_args: k_ext) (user_args: k_ext) =
+  let translation args1 args2 =
+    match (args1, args2) with
+    | (p1, Params p2) ->
+       let rec aux p1 p2 =
+	 (match (p1, p2) with
+	 | (Concat (a1, b1), Concat(a2, b2)) ->
+	    (match (b1, b2) with
+	    | (Concat _, Concat _) ->
+	       let ancien = param_name a1 in
+	       let nouveau = param_name a2 in
+	       let list = (aux b1 b2) in
+	       (nouveau, ancien) :: list
+	    | (Empty, Empty) ->
+	       let ancien = param_name a1 in
+	       let nouveau = param_name a2 in
+	       (nouveau, ancien) :: []
+	    | (a, Empty) ->
+	       print_ast a; failwith "Too much args in skel node";
+	    | (Empty, a) ->
+	       print_ast a; failwith "Not enough args in skel node";
+	    | (a, b) ->
+	       print_ast a; print_ast b; failwith "translation_create_only";
+	    )
+	 | (a, b) -> print_ast a; print_ast b; failwith "translation_create_only";
+	 )
+       in aux p1 p2
+    | (a, b) -> print_ast a; print_ast b; failwith "translation_create_only";
+  in
+  translation skel_args user_args
     
 (*
   Recupere un element dans les parametres du Skel en fonction du nom dans les parametres de l'ast utilisateur
@@ -178,12 +217,21 @@ let translate_id (name: string) (params: k_ext) (trans: (string * string) list) 
   @param user_body l'ast de l'utilisateur
   @param trans la table de traduction
 *)
-let fill_skel_node (params: k_ext) (name: string)(user_body: k_ext) (trans: (string * string) list) =
+let fill_skel_node (params: k_ext) (user_params: k_ext) (user_body: k_ext) (ret: k_ext) =
+  let rec print_list (l: (string*string) list) =
+    match l with
+    | [] -> Printf.printf ("\n");
+    | t ->
+       let head = List.hd t in
+       Printf.printf ("(%s %s)") (fst head) (snd head); 
+       print_list (List.tl t)
+  in
+  let trans = translation_create_only params user_params in
+  print_list trans;
   let n_skel =
     let rec aux current =
       ( match current with
       | Return (a) ->
-	 let ret = translate_id name params trans in
 	 set_vect_var (ret) (aux a)
       | Seq(a, b) -> seq a (aux b)
       | Local (a, b) -> Local (a, aux b)
@@ -215,7 +263,7 @@ let fill_skel_node (params: k_ext) (name: string)(user_body: k_ext) (trans: (str
   @param trans la table de translation des variable
   @return le corp de l'ast
 *)
-let skel_body_creation (skel_body: k_ext) (user_body: k_ext) (trans: (string * string) list) =
+let skel_body_creation (skel_body: k_ext) (user_params: k_ext) (user_body: k_ext)  =
   let n_body =
     let rec aux current =
       (match current with
@@ -233,7 +281,7 @@ let skel_body_creation (skel_body: k_ext) (user_body: k_ext) (trans: (string * s
       | Int a -> Int a
       | IntId (v, i) -> IntId (v, i)
       | Id (v) -> Id (v)
-      | Skel (a, b) -> fill_skel_node a b user_body trans
+      | Skel (a, b) -> fill_skel_node a user_params user_body b
       | IdName (v) -> IdName (v) 
       | a -> print_ast a; assert false
       )
@@ -299,7 +347,7 @@ let map_skel =
      let id_x = IntId ("x", (4)) in
      let vec_acc_a = IntVecAcc (id_a, id_x) in
      let vec_acc_b = IntVecAcc (id_b, id_x) in
-     let skel_args = Skel (Concat ( vec_acc_a, ( Concat ( vec_acc_b, (empty_arg()) ))), "ret_val") in
+     let skel_args = Skel (Concat ( vec_acc_a, ( empty_arg()) ), vec_acc_b) in
      let body = Local ( (Decl (new_int_var (4) "x") ),
 			     Seq
 			       (Set (id_x , Intrinsics ((cuda_name, opencl_name)) ),
@@ -323,7 +371,7 @@ let map2_skel =
   let vec_acc_a = IntVecAcc (id_a, id_x) in
   let vec_acc_b = IntVecAcc (id_b, id_x) in
   let vec_acc_c = IntVecAcc (id_c, id_x) in 
-  let skel_args = Skel (Concat ( vec_acc_a, ( Concat ( vec_acc_b, ( Concat (vec_acc_c, (empty_arg()) ))))), "ret_val") in
+  let skel_args = Skel (Concat ( vec_acc_a, ( Concat ( vec_acc_b,  (empty_arg()) ))), vec_acc_c) in
   let body = Local ( (Decl (new_int_var (4) "x") ),
 		     Seq
 		       (Set (id_x , Intrinsics ((cuda_name, opencl_name)) ),
@@ -340,7 +388,7 @@ let map2  ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=
   | Kern (param, body) ->
      let (skel_param, skel_body) = map2_skel in
      let (trans, final_params) = translation_create_vec skel_param param k3 in
-     let final_body = skel_body_creation skel_body body trans in
+     let final_body = skel_body_creation skel_body param body in
 
      let ml_kern = (let map2 = fun f k a b ->
        let c = Vector.create k (Vector.length a) in
@@ -409,7 +457,7 @@ let map ((ker: ('a, 'b, ('c -> 'd), 'e, 'f) sarek_kernel)) ?dev:(device=(Spoc.De
      let (trans, final_params) = translation_create_vec skel_param param k3 in
 
      (* Transformation de l'ast du squelette en fonction de l'ast de l'utilisateur *)
-     let final_body = skel_body_creation skel_body body trans in
+     let final_body = skel_body_creation skel_body param body  in
 
      (* Creation de l'element compilable par Spoc *)
      let res = res_creation ker (Tools.map(k1) (snd k3)) k1 (final_params, final_body) k3 in
