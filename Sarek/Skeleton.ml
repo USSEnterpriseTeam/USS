@@ -232,7 +232,11 @@ let fill_skel_node (params: k_ext) (user_params: k_ext) (user_body: k_ext) (ret:
     let rec aux current =
       ( match current with
       | Return (a) ->
-	 set_vect_var (ret) (aux a)
+	(match ret with
+	| IntId(_,_) -> Set (ret, (aux a))
+	| IntVecAcc(_,_) -> set_vect_var (ret) (aux a)
+	| a -> print_ast a; failwith "Translation create"
+	)
       | Seq(a, b) -> seq a (aux b)
       | Local (a, b) -> Local (a, aux b)
       | Plus (a, b) -> Plus (aux a, aux b)
@@ -276,6 +280,7 @@ let skel_body_creation (skel_body: k_ext) (user_params: k_ext) (user_body: k_ext
       | Mod (a, b) -> Mod (aux a, aux b)
       | LtBool (a, b) -> LtBool (aux a, aux b)
       | GtBool (a, b) -> GtBool (aux a, aux b)
+      | EqBool (a, b) -> EqBool (aux a, aux b)
       | If (a, b) -> If (aux a, aux b)
       | Ife (a, b, c) -> Ife (aux a, aux b, aux c)
       | Int a -> Int a
@@ -283,6 +288,11 @@ let skel_body_creation (skel_body: k_ext) (user_params: k_ext) (user_body: k_ext
       | Id (v) -> Id (v)
       | Skel (a, b) -> fill_skel_node a user_params user_body b
       | IdName (v) -> IdName (v) 
+      | DoLoop (a, b, c, d) -> DoLoop (aux a, aux b, aux c, aux d)
+      | Acc (a, b) -> Acc (aux a, aux b)
+      | Return (a) -> Return (aux a)
+      | And (a, b) -> And (aux a, aux b)
+      | Or (a, b) -> Or (aux a, aux b)
       | a -> print_ast a; assert false
       )
     in aux skel_body
@@ -504,5 +514,144 @@ let map ((ker: ('a, 'b, ('c -> 'd), 'e, 'f) sarek_kernel)) ?dev:(device=(Spoc.De
      vec_out		
   | _ -> failwith "malformed Kernel"
 
+
+
+(*
+  Retourne l'Ast d'un squelette de reduce
+*)
+let reduce_skel =
+     let (cuda_name, opencl_name) = ("blockIdx.x*blockDim.x+threadIdx.x", "get_global_id(0)") in  
+     let params = params (concat (new_int_vec_var (0) "a")
+				(concat (new_int_var (1) "n") (empty_arg())))
+     in
+     let id_a = IntId ("a", (0)) in
+     let id_n = IntId ("n", (1)) in
+     let id_x = IntId ("idx", (2)) in
+     let id_n2 = IntId ("n2", (3)) in
+     let id_n3 = IntId ("n3", (4)) in
+     let id_pos = IntId ("pos", (5)) in
+     let id_i = IntId ("i", (6)) in
+     let b = IntId ("b", (7)) in
+     let vec_acc_a = IntVecAcc (id_a, id_x) in
+     let skel_args = Skel (Concat ( vec_acc_a, empty_arg()), b) in
+     let body = Local ( 
+                  Decl (new_int_var (2) "idx"),
+                  Local ( 
+                    Decl (new_int_var (3) "n2"),
+                    Local ( 
+		      Decl (new_int_var (4) "n3"),
+		      Local (
+                        Decl (new_int_var (5) "pos"),
+			Local (
+			  Decl (new_int_var (7) "b"),
+		          Seq (
+    		            Set (id_x , Intrinsics ((cuda_name, opencl_name)) ),
+                            Seq (
+                              Set (id_n2, id_n),
+                              Seq (
+				Set (id_n3, Int (0)),
+				Seq (
+			          Set (id_pos, Int (0)),
+			          
+			          DoLoop ( 
+				    id_i,
+			            Int (0),
+				    Int (4),
+				    Seq (
+				      Acc (id_n3, Div (id_n2, Int (2))),
+				      Seq (
+				        Ife (
+					  EqBool (Mod (id_n2, Int (2)), Int (0)),
+					  Acc (id_n2, Plus (id_n3, Int (1))),
+					  Acc (id_n2, id_n3)
+					),
+					If (
+					  LtBool (id_x, id_n2),
+					  Ife (
+					    And (
+					      Or (LtBool (id_n2, id_n3), 
+				  		  GtBool (id_n2, id_n3)),
+					      GtBool (id_x, Int (0))
+					    ),
+					    Seq (
+					      Acc (id_pos, Plus (id_x, id_n3)),
+					      skel_args
+					    ),
+					    Seq (
+					      Acc (id_pos, Plus (id_x, id_n2)),
+					      skel_args
+					    )
+					  )
+			 		))))))))))))) in
+     (params, body)
+
+  
+let rec print_list list = 
+  if list != [] then
+    let (t1, t2) = List.hd list in
+    Printf.printf "(%s %s), " t1 t2;
+    print_list (List.tl list)
+  else
+    Printf.printf "\n"
+;;
+
+let reduce ((ker: ('a, 'b, 'c -> 'd, 'e, 'f) sarek_kernel)) ?dev:(device=(Spoc.Devices.init ()).(0)) (vec_in : ('c, 'h) Vector.vector) =
+  let ker2, k = ker in
+  let (k1, k2, k3) = (k.ml_kern, k.body, k.ret_val) in
+  match k2 with
+  | Kern (param, body) ->
+     (* Recuperation d'un ast squelette de map*)
+     let (skel_param, skel_body) = reduce_skel  in
+
+     (*Transformation des parametres et recuperation de la table de traduction*)
+     let (trans, final_params) = translation_create_vec skel_param param k3 in
+
+     (* Transformation de l'ast du squelette en fonction de l'ast de l'utilisateur *)
+     let final_body = skel_body_creation skel_body param body in
+
+     (* Creation de l'element compilable par Spoc *)
+     let res = res_creation ker (Tools.map(k1) (snd k3)) k1 (final_params, final_body) k3 in
+     let length = Vector.length vec_in in
+
+     (*Generation du vecteur de sortie*)
+     let vec_out = (Vector.create (snd k3) ~dev:device length) in
+     Mem.to_device vec_in device;
+
+     
+     let target =
+       match device.Devices.specific_info with
+       | Devices.CudaInfo _ -> Devices.Cuda
+       | Devices.OpenCLInfo _ -> Devices.OpenCL in
+
+     
+     ignore(gen ~only:target res); 
+     (*affiche l'ast je sais pas pk.
+     *)
+
+     let spoc_ker, kir_ker = res in
+     let open Kernel in
+     spoc_ker#compile ~debug:false device;
+     let (block, grid ) = thread_creation device length in
+     let bin = (Hashtbl.find (spoc_ker#get_binaries ()) device) in
+     let offset = ref 0 in
+     (* Passage des parametre au kernel *)
+     (match device.Devices.specific_info with
+     | Devices.CudaInfo cI ->
+	let extra = Kernel.Cuda.cuda_create_extra 2 in
+	Kernel.Cuda.cuda_load_arg offset extra device bin 0 (arg_of_vec vec_in);
+	Kernel.Cuda.cuda_load_arg offset extra device bin 1 (arg_of_int length);
+	Kernel.Cuda.cuda_load_arg offset extra device bin 2 (arg_of_vec vec_out);
+	Kernel.Cuda.cuda_launch_grid offset bin grid block extra device.Devices.general_info 0;
+     | Devices.OpenCLInfo _ ->
+	let clFun = bin in
+	let offset = ref 0
+	in
+	Kernel.OpenCL.opencl_load_arg offset device clFun 0 (arg_of_vec vec_in);
+	Kernel.OpenCL.opencl_load_arg offset device clFun 1 (arg_of_int length);
+	Kernel.OpenCL.opencl_load_arg offset device clFun 2 (arg_of_vec vec_out);
+	Kernel.OpenCL.opencl_launch_grid clFun grid block device.Devices.general_info 0
+       );
+     vec_out		
+  | _ -> failwith "malformed Kernel"
 
   
