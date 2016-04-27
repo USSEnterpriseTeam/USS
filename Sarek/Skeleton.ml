@@ -244,6 +244,27 @@ let fill_skel_node (params: k_ext) (user_params: k_ext) (user_body: k_ext) (ret:
     in aux user_body
   in n_skel
 
+
+let translate_info (var: k_ext) (trans: (string * k_ext) list) =
+  let get_name var =
+    match var with
+    | IntVar (_, name) -> name
+    | FloatVar (_, name) -> name
+    | UnitVar (_, name) -> name
+    | DoubleVar (_, name) -> name
+    | BoolVar (_, name) -> name
+    | VecVar (_, _, name) -> name
+    | a -> print_ast a; failwith "translate_info";
+  in
+  let name = get_name var in
+  let rec find_name name list var =
+    match list with
+    | (ancien, ret)::queue ->
+       if(ancien = name) then ret
+       else find_name name queue var
+    | [] -> var
+  in find_name name trans var
+  
 (*
   Parcours un squelette et remplace ce qu'il faut
   @param skel_body le squelette
@@ -251,12 +272,13 @@ let fill_skel_node (params: k_ext) (user_params: k_ext) (user_body: k_ext) (ret:
   @param trans la table de translation des variable
   @return le corp de l'ast
 *)
-let skel_body_creation (skel_body: k_ext) (user_params: k_ext) (user_body: k_ext)  =
+let skel_body_creation (skel_body: k_ext) (user_params: k_ext) (user_body: k_ext)  (trans: (string * k_ext) list) =
   let n_body =
     let rec aux current =
       (match current with
       | Seq(a, b) -> seq a (aux b)
-      | Local (a, b) -> Local (a, aux b)
+      | Local (a, b) -> Local (aux a, aux b)
+      | Decl (a) -> translate_info a trans
       | Plus (a, b) -> Plus (aux a, aux b)
       | Min (a, b) -> Min (aux a, aux b)
       | Mul (a, b) -> Mul (aux a, aux b)
@@ -408,7 +430,7 @@ let generate ((ker: ('a, 'b, (int -> 'd), 'f, 'g) sarek_kernel)) ?dev:(device=(S
        | a -> print_ast a; failwith "malformed skel";
      in
      let final_params = get_params in
-     let final_body = skel_body_creation skel_body param body  in
+     let final_body = skel_body_creation skel_body param body [] in
      let ml_kern = (let generate = fun f k n ->
        let c = Vector.create k (n) in
        for i = 0 to (n - 1) do
@@ -462,7 +484,7 @@ let map2  ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=
   | Kern (param, body) ->
      let (skel_param, skel_body) = map2_skel in
      let (trans, final_params) = translation_create_vec skel_param param k3 in
-     let final_body = skel_body_creation skel_body param body in
+     let final_body = skel_body_creation skel_body param body [] in
 
      let ml_kern = (let map2 = fun f k a b ->
        let c = Vector.create k (Vector.length a) in
@@ -531,7 +553,7 @@ let map ((ker: ('a, 'b, ('c -> 'd), 'e, 'f) sarek_kernel)) ?dev:(device=(Spoc.De
      let (trans, final_params) = translation_create_vec skel_param param k3 in
 
      (* Transformation de l'ast du squelette en fonction de l'ast de l'utilisateur *)
-     let final_body = skel_body_creation skel_body param body  in
+     let final_body = skel_body_creation skel_body param body  [] in
 
      (* Creation de l'element compilable par Spoc *)
      let res = res_creation ker (Tools.map(k1) (snd k3)) k1 (final_params, final_body) k3 in
@@ -671,7 +693,7 @@ let reduce ((ker: ('a, 'b, 'c -> 'd, 'e, 'f) sarek_kernel)) ?dev:(device=(Spoc.D
      let (trans, final_params) = translation_create_vec skel_param param k3 in
 
      (* Transformation de l'ast du squelette en fonction de l'ast de l'utilisateur *)
-     let final_body = skel_body_creation skel_body param body in
+     let final_body = skel_body_creation skel_body param body [("patate", VecVar(100, "io", "patate")] in
 
      (* Creation de l'element compilable par Spoc *)
      let res = res_creation ker (Tools.map(k1) (snd k3)) k1 (final_params, final_body) k3 in
