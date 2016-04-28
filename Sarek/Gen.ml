@@ -230,10 +230,10 @@ module Generator (M:CodeGenerator) = struct
   | IntId (s,_) -> s
   |Intrinsics gv -> M.parse_intrinsics gv
   | Seq (a,b)  -> (parse i a)^" ;\n"^(indent i)^(parse i b)
-  | Ife(a,b,c) -> "if ("^(parse i a)^"){\n"^(indent (i+1))^(parse (i+1) b)^"\n"^(indent i)^"}\n"^(indent i)^"else{\n"^(indent (i+1))^(parse (i+1) c)^"\n"^(indent i)^"}\n"^(indent i)
+  | Ife(a,b,c) -> "if ("^(parse i a)^"){\n"^(indent (i+1))^(parse (i+1) b)^";\n"^(indent i)^"}\n"^(indent i)^"else{\n"^(indent (i+1))^(parse (i+1) c)^";\n"^(indent i)^"}\n"^(indent i)
   | If (a,b) -> "if ("^(parse i a)^")"^"{\n"^(indent (i+1))^(parse (i+1) b)^"\n"^(indent i)^"}"^(indent i)
-  | Or (a,b) -> (parse i a)^" || "^(parse i b)
-  | And (a,b) -> (parse i a)^" && "^(parse i b)
+  | Or (a,b) -> "("^(parse i a)^" || "^(parse i b)^")"
+  | And (a,b) -> "("^(parse i a)^" && "^(parse i b)^")"
   | Not (a) -> "!"^(parse i a)
   | EqCustom (n,v1,v2) ->
     let v1 = parse 0 v1

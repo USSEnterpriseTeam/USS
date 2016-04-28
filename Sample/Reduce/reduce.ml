@@ -22,21 +22,28 @@ let reduce = kern a n ->
       n2 := n3;
     );
     if idx < n2 then
-      if ((n2 < n3) || (n2 > n3)) && (idx > 0) then
+      if (((n2 < n3) || (n2 > n3)) && (idx > 0)) then
         pos := idx + n3;
-      else
+      else if n2 = n3 then
         pos := idx + n2;
   done
 ;;
 
+
+
+Kirc.gen reduce;;
 *)
-
-(*Kirc.gen reduce;;*)
-
 let a = Vector.create Vector.float32 10;;
 
 for i = 0 to Vector.length a - 1 do 
   Spoc.Mem.set a i 1.;
 done;;
 
-let a = reduce (kern a -> a +. 1.) a;;
+let c = reduce (kern a b -> a +. b) a;;
+
+Printf.printf "res = %f\n" c;;
+
+for i = 0 to Vector.length a - 1 do
+  Printf.printf "%f" (Spoc.Mem.get a i)
+done;;
+Printf.printf "\n";;
