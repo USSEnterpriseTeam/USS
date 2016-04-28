@@ -78,6 +78,7 @@ type k_ext =
   | GFloat of (unit -> float)
   | Unit
   | Skel of k_ext * k_ext
+  | SyncThread
       
 and case = int * (string*string*int) option * k_ext
 

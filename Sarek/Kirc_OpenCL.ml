@@ -50,5 +50,7 @@ let kern_end = "}"
 
 let parse_intrinsics (cuda,opencl) = opencl
 
+let sync_thread = "barrier(CLK_GLOBAL_MEM_FENCE)"
+
 
 

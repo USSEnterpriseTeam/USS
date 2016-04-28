@@ -651,41 +651,44 @@ let reduce_skel =
 	      Seq (
 		Acc (IntVecAcc (id_tmp, id_x), vec_acc_a),
 		Seq (
-		  Set (id_n2, id_n),
+		  SyncThread,
 		  Seq (
-		    Set (id_n3, Int (0)),
+		    Set (id_n2, id_n),
 		    Seq (
-		      Set (id_pos, Int (0)),
-		      
-		      DoLoop ( 
-			id_i,
-			Int (1),
-			Int (4),
-			Seq (
-			  Acc (id_n3, Div (id_n2, Int (2))),
+		      Set (id_n3, Int (0)),
+		      Seq (
+			Set (id_pos, Int (0)),
+			
+			DoLoop ( 
+			  id_i,
+			  Int (1),
+			  Int (4),
 			  Seq (
-			    Ife (
-			      EqBool (Mod (id_n2, Int (2)), Int (0)),
-			      Acc (id_n2, id_n3),
-			      Acc (id_n2, Plus (id_n3, Int (1)))
-			    ),
-			    If (
-			      LtBool (id_x, id_n2),
+			    Acc (id_n3, Div (id_n2, Int (2))),
+			    Seq (
 			      Ife (
-				And (
-				  Or (LtBool (id_n2, id_n3), 
-				      GtBool (id_n2, id_n3)),
-				  GtBool (id_x, Int (0))
-				),
-				Seq (
-				  Acc (id_pos, Plus (id_x, id_n3)),
-				  skel_args
-				),
-				If (
-				  EqBool (id_n2, id_n3),
+				EqBool (Mod (id_n2, Int (2)), Int (0)),
+				Acc (id_n2, id_n3),
+				Acc (id_n2, Plus (id_n3, Int (1)))
+			      ),
+			      If (
+				LtBool (id_x, id_n2),
+				Ife (
+				  And (
+				    Or (LtBool (id_n2, id_n3), 
+					GtBool (id_n2, id_n3)),
+				    GtBool (id_x, Int (0))
+				  ),
 				  Seq (
-				    Acc (id_pos, Plus (id_x, id_n2)),
+				    Acc (id_pos, Plus (id_x, id_n3)),
 				    skel_args
+				  ),
+				  If (
+				    EqBool (id_n2, id_n3),
+				    Seq (
+				      Acc (id_pos, Plus (id_x, id_n2)),
+				      skel_args
+				    )
 				  )
 				)
 			      )
@@ -703,12 +706,15 @@ let reduce_skel =
       )
     )
   ),
-  Seq (
-    Acc (IntVecAcc (id_b, (Int (0))), IntVecAcc (id_tmp, (Int 0))),
-    Empty
+    Seq (
+      SyncThread,
+      Seq (
+	Acc (IntVecAcc (id_b, (Int (0))), IntVecAcc (id_tmp, (Int 0))),
+	Empty
+      )
+    )
   )
-  )
-		    in
+		     in
 		   (params, body)
 
 		     

@@ -68,6 +68,8 @@ module type CodeGenerator = sig
   val kern_end : string
 
   val parse_intrinsics : intrinsics -> string
+
+  val sync_thread : string
 end
 
 module Generator (M:CodeGenerator) = struct
@@ -228,7 +230,7 @@ module Generator (M:CodeGenerator) = struct
   | GFloat  a  -> (string_of_float (a ()))^"f"
   | Double f -> string_of_float f
   | IntId (s,_) -> s
-  |Intrinsics gv -> M.parse_intrinsics gv
+  | Intrinsics gv -> M.parse_intrinsics gv
   | Seq (a,b)  -> (parse i a)^" ;\n"^(indent i)^(parse i b)
   | Ife(a,b,c) -> "if ("^(parse i a)^"){\n"^(indent (i+1))^(parse (i+1) b)^";\n"^(indent i)^"}\n"^(indent i)^"else{\n"^(indent (i+1))^(parse (i+1) c)^";\n"^(indent i)^"}\n"^(indent i)
   | If (a,b) -> "if ("^(parse i a)^")"^"{\n"^(indent (i+1))^(parse (i+1) b)^"\n"^(indent i)^"}"^(indent i)
@@ -290,6 +292,7 @@ module Generator (M:CodeGenerator) = struct
         " " l in
     ("switch ("^match_e^"."^s^"_sarek_tag"^"){"^switch_content^
     "}") 
+  | SyncThread -> M.sync_thread
   | _ -> assert false
 
 and parse_int n = function

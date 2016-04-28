@@ -50,3 +50,5 @@ let kern_start  = "#ifdef __cplusplus\nextern \"C\" {\n#endif\n\n__global__"
 let kern_end = "}\n#ifdef __cplusplus\n}\n#endif"
 
 let parse_intrinsics (cuda,opencl) = cuda
+
+let sync_thread = "__syncthreads()"

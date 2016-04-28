@@ -120,6 +120,7 @@ type  k_ext =
   | GFloat of (unit -> float)
   | Unit
   | Skel of k_ext * k_ext
+  | SyncThread
   
 
 and case =  int * (string*string*int) option * k_ext
@@ -355,5 +356,7 @@ let print_ast a =
        print i ("Skel");
       aux (i+1) b;
       aux (i+1) a;
+    | SyncThread ->
+      print i "SyncThread";
 	
   in aux 0 a;;

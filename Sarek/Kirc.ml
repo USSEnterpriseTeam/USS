@@ -464,6 +464,7 @@ let rewrite ker =
     | Unit -> kern
     | Match (s,a,b) -> Match (s,aux a, 
                               Array.map (fun (i,ofid,e) -> (i,ofid,aux e)) b)
+    | SyncThread -> kern
     
 
   in
