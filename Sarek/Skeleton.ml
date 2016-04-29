@@ -213,6 +213,15 @@ let fill_skel_node (params: k_ext) (user_params: k_ext) (user_body: k_ext) (ret:
   in n_skel
 
 
+let translate_static (var: string) (i: int) (trans: (string * k_ext) list) =
+  let rec find_name name list i =
+    match list with
+    | (ancien, ret)::queue ->
+       if(ancien = name) then ret
+       else find_name var queue i
+    | [] -> IntId (name, i)
+  in find_name var trans i
+  
 let translate_info (var: k_ext) (trans: (string * k_ext) list) =
   let get_name var =
     match var with
@@ -259,7 +268,7 @@ let skel_body_creation (skel_body: k_ext) (user_params: k_ext) (user_body: k_ext
       | If (a, b) -> If (aux a, aux b)
       | Ife (a, b, c) -> Ife (aux a, aux b, aux c)
       | Int a -> Int a
-      | IntId (v, i) -> IntId (v, i)
+      | IntId (v, i) -> translate_static v i trans
       | Id (v) -> Id (v)
       | Skel (a, b) -> fill_skel_node a user_params user_body b
       | IdName (v) -> IdName (v) 
@@ -714,8 +723,8 @@ let reduce_skel =
       )
     )
   )
-		     in
-		   (params, body)
+  in
+  (params, body)
 
 		     
 let rec print_list list = 
