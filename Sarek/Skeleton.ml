@@ -212,24 +212,7 @@ let fill_skel_node (params: k_ext) (user_params: k_ext) (user_body: k_ext) (ret:
     in aux user_body
   in n_skel
 
-let translate_static_name (var: string) (trans: (string * k_ext) list) =
-  let rec find_name name list =
-    match list with
-    | (ancien, ret)::queue ->
-       if(ancien = name) then ret
-       else find_name var queue
-    | [] -> IdName (name)
-  in find_name var trans
-  
-let translate_static_int (var: string) (i: int) (trans: (string * k_ext) list) =
-  let rec find_name name list i =
-    match list with
-    | (ancien, ret)::queue ->
-       if(ancien = name) then ret
-       else find_name var queue i
-    | [] -> IntId (name, i)
-  in find_name var trans i
-  
+
 let translate_info (var: k_ext) (trans: (string * k_ext) list) =
   let get_name var =
     match var with
@@ -276,10 +259,10 @@ let skel_body_creation (skel_body: k_ext) (user_params: k_ext) (user_body: k_ext
       | If (a, b) -> If (aux a, aux b)
       | Ife (a, b, c) -> Ife (aux a, aux b, aux c)
       | Int a -> Int a
-      | IntId (v, i) -> translate_static_int v i trans
+      | IntId (v, i) -> IntId (v, i)
       | Id (v) -> Id (v)
       | Skel (a, b) -> fill_skel_node a user_params user_body b
-      | IdName (v) -> translate_static_name v trans
+      | IdName (v) -> IdName (v) 
       | DoLoop (a, b, c, d) -> DoLoop (aux a, aux b, aux c, aux d)
       | Acc (a, b) -> Acc (aux a, aux b)
       | Return (a) -> Return (aux a)
@@ -730,8 +713,8 @@ let reduce_skel =
       )
     )
   )
-  in
-  (params, body)
+		     in
+		   (params, body)
 
 		     
 let rec print_list list = 
@@ -829,27 +812,23 @@ let reduce2_skel =
 
   let params = params (concat (new_int_vec_var (0) "a")
 			 (concat (new_int_var (1) "n")
-			    (concat (new_int_vec_var (7) "b") (empty_arg()))))
+			    (concat (new_int_vec_var (2) "b") (empty_arg()))))
   in
   let id_a = IntId ("a", (0)) in
   let id_n = IntId ("n", (1)) in
-  let id_x = IntId ("idx", (2)) in
-  let id_n2 = IntId ("n2", (3)) in
-  let id_n3 = IntId ("n3", (4)) in
-  let id_pos = IntId ("pos", (5)) in
-  let id_i = IntId ("i", (6)) in
-  let id_b = IntId ("b", (7)) in
-  let id_tmp = IntId ("spoc_var0", (8)) in
-  let vec_acc_tmp1 = IntVecAcc (id_tmp, id_x) in
-  let vec_acc_tmp2 = IntVecAcc (id_tmp, id_pos) in
-  let vec_acc_a = IntVecAcc (id_a, id_x) in
-  let skel_args = Skel (Concat ( vec_acc_tmp1, ( Concat ( vec_acc_tmp2,  (empty_arg())))), vec_acc_tmp1) in
+  let id_b = IntId ("b", (2)) in
+  let id_tid = IntId ("tid", (3)) in
+  let id_i = IntId ("i", (4)) in
+  let id_gridSize = IntId ("gridSize", (5)) in
+  let id_pos = IntId ("pos", (6)) in
+  
+  let skel_args_1 = Skel (Concat ( IntVecAcc (id_shared, id_tid), ( Concat ( IntVecAcc (id_a, id_i), ( Concat ( IntVecAcc (id_a, id_pos),  (empty_arg())))))), IntVecAcc (id_shared, id_tid)) in
+  let skel_args_2 = Skel (Concat ( IntvecAcc (id_shared, id_tid), ( Concat ( IntVecAcc (id_a, id_i), Concat ( IntVecAcc (id_a, id_pos), (empty_arg()))))), IntVecAcc (id_shared, id_tid)) in
+  let skel_args_3 = Skel (Concat ( IntVecAcc (id_shared, id_tid), ( Concat ( IntVecAcc (id_shared, id_pos), (empty_arg())))), IntVecAcc (id_shared, id_tid)) in
 
   let body = Local (Decl( IdName ("shared")),
 		    Local (
-		      Decl (new_int_var (2) "idx"),
-		      Local (
-			Decl (new_int_var (3) "tid"),
+		      Decl (new_int_var (3) "tid"),
 			Local (
 			  Decl (new_int_var (4) "i"),
 			  Local (
@@ -901,6 +880,52 @@ let reduce2_skel =
 						Set (id_i, Plus (id_i, id_gridSize))
 					      )
 					    )
+					  ),
+					  Seq (
+					    SyncThread,
+					    Seq (
+					      If (
+						LtBool (id_tid, IdName ("CONSTANTE_1")),
+						Acc (IntVecAcc (id_shared, id_tid),
+						     Plus (
+						       IntVecAcc (id_shared, id_tid),
+						       IntVecAcc (id_shared, Plus (id_tid, IdName ("CONSTANTE_1")))
+						     )),
+					      ),
+					      Seq (
+						SyncThread,
+						Seq (
+						  If (
+						    Ltbool (id_tid, Int (32)),
+						    Acc (IntVecAcc (id_shared, id_tid),
+							 Plus (
+							   IntVecAcc (id_shared, id_tid),
+							   IntvecAcc (id_shared, Plus (id_tid, IdName ("CONSTANTE_2")))
+							 )
+						    )
+						  ),
+						  If (
+						    EqBool (id_tid, Int (0)),
+						    Acc (IntVecAcc (id_b, Intrinsics ((cu_blockIdx, cl_blockIdx))),
+							 IntVecAcc (id_shared, Int (0))
+						    )
+						  )
+						)
+					      )
+					    )
+					  )
+					)
+				      )
+				    )
+				  )
+				)
+			      )
+			    )
+			  )
+			)
+		      )
+		    )
+  )
 						    
 in
   (params, body)
