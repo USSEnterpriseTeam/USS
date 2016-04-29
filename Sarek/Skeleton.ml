@@ -743,6 +743,7 @@ let reduce ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device
      (* Transformation de l'ast du squelette en fonction de l'ast de l'utilisateur *)
      let final_body = skel_body_creation skel_body param body [("tmp", Arr(0, (Int (Vector.length vec_in)), EFloat32, Shared))] in
 
+     (* TODO : VERSION CPU (ici code du map pour exemple) *)
      let ml_kern = (let reduce = fun f k a b ->
        let c = Vector.create k (Vector.length a) in
        for i = 0 to (Vector.length a - 1) do
@@ -801,12 +802,14 @@ let reduce ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device
 
 (*
   Retourne l'Ast d'un squelette de reduce2
-
+*)
 let reduce2_skel =
   let (cuda_name, opencl_name) = ("blockIdx.x*blockDim.x+threadIdx.x", "get_global_id(0)") in  
-  let (cu_threadIdx, cl_threadIdx) = ("threadIdx.x", "v_opencl") in
-  let (cu_blockIdx, cl_blockIdx) = ("blockIdx.x", "v_opencl") in
-  let (cu_gridDim, cl_gridDim) = ("gridDim.x", "v_opencl") in
+  let (cu_threadIdx, cl_threadIdx) = ("threadIdx.x", "get_local_id(0)") in
+  let (cu_blockIdx, cl_blockIdx) = ("blockIdx.x", "get_group_id(0)") in
+  let (cu_gridDim, cl_gridDim) = ("gridDim.x", "get_num_groups(0)") in
+  let (cu_blockDim, cl_blockDim) = ("blockDim.x", "get_local_size(0)") in
+
   let params = params (concat (new_int_vec_var (0) "a")
 			 (concat (new_int_var (1) "n")
 			    (concat (new_int_vec_var (7) "b") (empty_arg()))))
@@ -825,85 +828,64 @@ let reduce2_skel =
   let vec_acc_a = IntVecAcc (id_a, id_x) in
   let skel_args = Skel (Concat ( vec_acc_tmp1, ( Concat ( vec_acc_tmp2,  (empty_arg())))), vec_acc_tmp1) in
 
-  let body = Local ( Local (
-    Decl (IdName("tmp")),
-    Local(
-      Decl (new_int_var (2) "idx"),
-      Local ( 
-	Decl (new_int_var (3) "n2"),
-	Local ( 
-	  Decl (new_int_var (4) "n3"),
-	  Local (
-            Decl (new_int_var (5) "pos"),
-	    Seq (
-    	      Set (id_x , Intrinsics ((cuda_name, opencl_name)) ),
-	      Seq (
-		Acc (IntVecAcc (id_tmp, id_x), vec_acc_a),
-		Seq (
-		  SyncThread,
-		  Seq (
-		    Set (id_n2, id_n),
-		    Seq (
-		      Set (id_n3, Int (0)),
-		      Seq (
-			Set (id_pos, Int (0)),
-			
-			DoLoop ( 
-			  id_i,
-			  Int (1),
-			  Int (4),
-			  Seq (
-			    Acc (id_n3, Div (id_n2, Int (2))),
-			    Seq (
-			      Ife (
-				EqBool (Mod (id_n2, Int (2)), Int (0)),
-				Acc (id_n2, id_n3),
-				Acc (id_n2, Plus (id_n3, Int (1)))
-			      ),
-			      If (
-				LtBool (id_x, id_n2),
-				Ife (
-				  And (
-				    Or (LtBool (id_n2, id_n3), 
-					GtBool (id_n2, id_n3)),
-				    GtBool (id_x, Int (0))
-				  ),
+  let body = Local (Decl( IdName ("shared")),
+		    Local (
+		      Decl (new_int_var (2) "idx"),
+		      Local (
+			Decl (new_int_var (3) "tid"),
+			Local (
+			  Decl (new_int_var (4) "i"),
+			  Local (
+			    Decl (new_int_var (5) "gridSize"),
+			    Local (
+			      Decl (new_int_var (6) "pos"),
+			      Seq (
+				Set (id_x, Intrinsics ((cuda_name, opencl_name))),
+				Seq (
+				  Set (id_tid, Intrinsics ((cu_threadIdx, cl_threadIdx))),
 				  Seq (
-				    Acc (id_pos, Plus (id_x, id_n3)),
-				    skel_args
-				  ),
-				  If (
-				    EqBool (id_n2, id_n3),
+				    Set (id_i, 
+					 Plus (
+					   Mul (Intrinsics ((cu_blockIdx, cl_blockIdx)),
+						Mul (Intrinsics ((cu_blockDim, cl_blockDim)),
+						     Int (2)),
+					   ),
+					   id_tid
+					 )
+				    ),
 				    Seq (
-				      Acc (id_pos, Plus (id_x, id_n2)),
-				      skel_args
-				    )
-				  )
-				)
-			      )
-			    )
-			  )
-			)
-		      )
-		    )
-		  )
-		)
-	      )
-	    )
-	  )
-	)
-      )
-    )
-  ),
-    Seq (
-      SyncThread,
-      Seq (
-	Acc (IntVecAcc (id_b, (Int (0))), IntVecAcc (id_tmp, (Int 0))),
-	Empty
-      )
-    )
-  )
-  in
+				      Set (id_gridSize, 
+					   Mul (
+					     Intrinsics ((cu_blockDim, cl_blockDim)),
+					     Mul (
+					       Int (2),
+					       Intrinsics ((cu_gridDim, cl_gridDim))
+					     )
+					   )
+				      ),
+				      Seq (
+					Acc (IntVecAcc (id_shared, id_tid), Int (0)),
+					Seq (
+					  While (
+					    LtBool (id_i, id_n),
+					    Seq (
+					      Set (id_pos, Plus (id_i, Intrinsics ((cu_blockDim, cl_blockDim)))),
+					      Seq (
+						Acc (
+						  IntVecAcc (id_shared, id_tid), 
+						  Plus (
+						    IntVecAcc (id_shared, id_tid),
+						    Plus (
+						      IntVecAcc (id_a, id_i),
+						      IntVecAcc (id_a, id_pos)
+						    )
+						  )
+						),
+						Set (id_i, Plus (id_i, id_gridSize))
+					      )
+					    )
+						    
+in
   (params, body)
 
 		     
@@ -978,4 +960,3 @@ let reduce ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device
      Spoc.Mem.get vec_out 0		
   | _ -> failwith "malformed Kernel"
      
-*)
