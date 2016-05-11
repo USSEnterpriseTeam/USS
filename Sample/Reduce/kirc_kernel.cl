@@ -17,11 +17,39 @@ int spoc_xor (int a, int b ) { return (a^b);}
 
 /************* FUNCTION PROTOTYPES ******************/
 /************* FUNCTION DEFINITIONS ******************/
-__kernel void spoc_dummy ( __global float* a, __global float* b, int n, __global float* c ) {
-  int x;
-  x = get_global_id(0) ;
-  if (x < n){
-    c[x] = a[x] + b[x] + 1.f;
-  }  
+__kernel void spoc_dummy ( __global float* a, __global float* n ) {
+  int idx;
+  int n2;
+  int n3;
+  int pos;
+  int b;
+  idx = get_global_id(0) ;
+  n2 = n ;
+  n3 = 0 ;
+  pos = 0 ;
+  for (int i = 0; i <= 4; i++){
+    n3 = n2 / 2 ;
+    if (n2 % 2 == 0){
+      n2 = n3 + 1
+    }
+    else{
+      n2 = n3
+    }
+     ;
+    if (idx < n2){
+      if (n2 < n3 || n2 > n3 && idx > 0){
+        pos = idx + n3 ;
+        b = a[idx] + 1.f
+      }
+      else{
+        pos = idx + n2 ;
+        b = a[idx] + 1.f
+      }
+      
+    }    ;}
+  
+  
+  
+  
   
 }

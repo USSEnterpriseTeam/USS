@@ -494,7 +494,7 @@ let load_file f =
   (s)
 
 let gen ?return:(r=false) ?only:(o=Devices.Both) ((ker: ('a, 'b, 'c,'d,'e) sarek_kernel)) =
-  let kir,k = ker in
+  let kir, k = ker in
   let (k1,k2,k3) = (k.ml_kern, k.body,k.ret_val) in
   print_ast k2;
   return_v := "","";
