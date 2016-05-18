@@ -39,7 +39,7 @@ for i = 0 to Vector.length a - 1 do
   Spoc.Mem.set a i 1.;
 done;;
 
-let c = reduce (kern a b -> a *. b) a;;
+let c = reduce (kern a b -> a +. b) a;;
 
 Printf.printf "res = %f\n" c;;
 

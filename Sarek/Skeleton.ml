@@ -804,49 +804,46 @@ let reduce_skel =
 		      Seq (
 			SyncThread,
 			Seq (
-			  Acc (IntVecAcc (id_b, Int 0), Int (1)),
+			  Set (id_n, Decl(IdName ("int_n"))),
 			  Seq (
-			    Set (id_n, Decl(IdName ("int_n"))),
+			    Set (id_n2, id_n),
 			    Seq (
-			      Set (id_n2, id_n),
+			      Set (id_n3, id_n),
 			      Seq (
-				Set (id_n3, id_n),
-				Seq (
-				  Set (id_pos, Int (0)),
-				  
-				  While ( 
-				    GtBool (id_n3, Int (0)),
+				Set (id_pos, Int (0)),
+				
+				While ( 
+				  GtBool (id_n3, Int (0)),
+				  Seq (
+				    Acc (
+				      id_n3,
+				      App (Intrinsics ((cu_floor, cl_floor)),
+					   (Array.make 1 (Div (id_n2, Int (2))))
+				      )
+				    ),
 				    Seq (
-				      Acc (
-					id_n3,
-					App (Intrinsics ((cu_floor, cl_floor)),
-					       (Array.make 1 (Div (id_n2, Int (2))))
-					)
+				      Ife (
+					EqBool (Mod (CastInt(id_n2), Int (2)), Int (0)),
+					Acc (id_n2, id_n3),
+					Acc (id_n2, Plus (id_n3, Int (1)))
 				      ),
-				      Seq (
+				      If (
+					LtBool (id_local, id_n2),
 					Ife (
-					  EqBool (Mod (CastInt(id_n2), Int (2)), Int (0)),
-					  Acc (id_n2, id_n3),
-					  Acc (id_n2, Plus (id_n3, Int (1)))
-					),
-					If (
-					  LtBool (id_local, id_n2),
-					  Ife (
-					    And (
-					      Or (LtBool (id_n2, id_n3), 
-						  GtBool (id_n2, id_n3)),
-					      GtBool (id_local, Int (0))
-					    ),
+					  And (
+					    Or (LtBool (id_n2, id_n3), 
+						GtBool (id_n2, id_n3)),
+					    GtBool (id_local, Int (0))
+					  ),
+					  Seq (
+					    Acc (id_pos, Plus (id_local, id_n3)),
+					    skel_args
+					  ),
+					  If (
+					    EqBool (id_n2, id_n3),
 					    Seq (
-					      Acc (id_pos, Plus (id_local, id_n3)),
+					      Acc (id_pos, Plus (id_local, id_n2)),
 					      skel_args
-					    ),
-					    If (
-					      EqBool (id_n2, id_n3),
-					      Seq (
-						Acc (id_pos, Plus (id_local, id_n2)),
-						skel_args
-					      )
 					    )
 					  )
 					)
@@ -870,18 +867,23 @@ let reduce_skel =
     )
   ),
     Seq (
-      SyncThread,
+      If (EqBool (id_x, Int 0),
+	  Seq (
+	    Acc (IntVecAcc (id_b, Int 0), IntVecAcc (id_tmp, Int 0)),
+	    Empty
+	  )
+      ),
       Seq (
-	If (EqBool(id_local, Int 0),
-	    Seq (
-	      final_skel_args,
+	SyncThread,
+	Seq (
+	  If (And (EqBool(id_local, Int 0), GtBool(id_x, Int 0)),
 	      Seq (
-		Acc (IntVecAcc (id_b, Int 0), Min (IntVecAcc (id_b, Int 0), Int 1)),
+		final_skel_args,
 		Empty
 	      )
-	    )
-	),
-	Empty
+	  ),
+	  Empty
+	)
       )
     )
   )
