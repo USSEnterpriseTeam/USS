@@ -4,9 +4,11 @@ __global__ void scan(float *g_odata, float *g_idata, int n)  {
     extern __shared__ float temp[]; 
 
     int thid = threadIdx.x;
+    int gid = blockIdx.x * blockDim.x + threadIdx.x;
     int offset = 1;
-    temp[2*thid] = g_idata[2*thid]; 
-    temp[2*thid+1] = g_idata[2*thid+1];  
+    
+    temp[2*thid] = g_idata[2*gid]; 
+    temp[2*thid+1] = g_idata[2*gid+1];  
 	
     for (int d = n >> 1; d > 0; d >>= 1) {
 	
@@ -23,7 +25,7 @@ __global__ void scan(float *g_odata, float *g_idata, int n)  {
 
     if (thid == 0) { temp[n - 1 + CONFLICT_FREE_OFFSET(n - 1)] = 0;}  
  
-    for (int d = 1; d < n; d *= 2) {  
+    for (int d = 1; d < n; d <<= 2) {  
 	offset >>= 1;  
 
 	__syncthreads();  
