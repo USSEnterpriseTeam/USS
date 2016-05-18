@@ -8,7 +8,7 @@
  #include <time.h>
  #include <stdio.h>
  #include <stdlib.h>
- #include <cutil_inline.h>
+
  
  #define MAX_THREADS	128 
  #define N		512
@@ -138,7 +138,7 @@
  	r_values = (int*)malloc(size);
  	
 	// allocate device memory
-        cutilSafeCall( cudaMalloc((void**)&d_values, size) );
+	cudaMalloc((void**)&d_values, size);
 
 	// allocate threads per block
         const unsigned int cThreadsPerBlock = 128;
@@ -156,34 +156,24 @@
                 Init(r_values, i);
 
 	 	// copy data to device	
-		cutilSafeCall( cudaMemcpy(d_values, r_values, size, cudaMemcpyHostToDevice) );
+		cudaMemcpy(d_values, r_values, size, cudaMemcpyHostToDevice);
 
 		printf("Beginning kernel execution...\n");
 
-		cutilCheckError( cutCreateTimer(&hTimer) );
- 		cutilSafeCall( cudaThreadSynchronize() );
-		cutilCheckError( cutResetTimer(hTimer) );
-	 	cutilCheckError( cutStartTimer(hTimer) );
 	
 		// execute kernel
  		quicksort <<< MAX_THREADS / cThreadsPerBlock, MAX_THREADS / cThreadsPerBlock, cThreadsPerBlock >>> (d_values);
-	 	cutilCheckMsg( "Kernel execution failed..." );
-
- 		cutilSafeCall( cudaThreadSynchronize() );
-	 	cutilCheckError( cutStopTimer(hTimer) );
-	 	double gpuTime = cutGetTimerValue(hTimer);
-
- 		printf( "\nKernel execution completed in %f ms\n", gpuTime );
+		cudaThreadSynchronize();
  	
 	 	// copy data back to host
-		cutilSafeCall( cudaMemcpy(r_values, d_values, size, cudaMemcpyDeviceToHost) );
+		cudaMemcpy(r_values, d_values, size, cudaMemcpyDeviceToHost);
  	
 	 	// test print
- 		/*for (int i = 0; i < N; i++) {
+ 		for (int i = 0; i < N; i++) {
  			printf("%d ", r_values[i]);
  		}
  		printf("\n");
-		*/
+		
 
 		// test
                 printf("\nTesting results...\n");
@@ -200,9 +190,7 @@
 	}
  	
  	// free memory
-	cutilSafeCall( cudaFree(d_values) );
- 	free(r_values);
- 	
- 	cutilExit(argc, argv);
+	cudaFree(d_values);
+ 	free(r_values);       
  	cudaThreadExit();
 }
