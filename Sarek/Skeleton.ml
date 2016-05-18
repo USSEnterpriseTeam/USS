@@ -293,7 +293,8 @@ let skel_body_creation (skel_body: k_ext) (user_params: k_ext) (user_body: k_ext
   let n_body =
     let rec aux current =
       (match current with
-      | Seq(a, b) -> seq a (aux b)
+      | Seq(a, b) -> seq (aux a) (aux b)
+      | Set(a, b) -> Set (a, aux b)
       | Local (a, b) -> Local (aux a, aux b)
       | Decl (a) -> translate_info a trans
       | Plus (a, b) -> Plus (aux a, aux b)
@@ -319,7 +320,7 @@ let skel_body_creation (skel_body: k_ext) (user_params: k_ext) (user_body: k_ext
       | IntVecAcc (a,b) -> IntVecAcc (aux a, aux b)
       | Empty -> Empty
       | While (a,b) -> While (aux a, aux b)
-      | a -> print_ast a; assert false
+      | a -> a
       )
     in aux skel_body
   in n_body
@@ -497,7 +498,7 @@ let run_skel (kern: ('a, 'b) skel_kernel) (params: (('c, 'd) param) list) (devic
   match device.Devices.specific_info with
   | Devices.CudaInfo cI ->
      let (offset, extra, length, outs) = load_cuda_args infos params device bin in
-     let (block, grid) = thread_creation device length in
+     let (block, grid) = thread_creation device length in     
      Kernel.Cuda.cuda_launch_grid offset bin grid block extra device.Devices.general_info 0;
      outs
   | Devices.OpenCLInfo _ ->
@@ -522,12 +523,16 @@ let map_skel =
   let vec_acc_a = IntVecAcc (id_a, id_x) in
   let vec_acc_b = IntVecAcc (id_b, id_x) in
   let skel_args = Skel (Concat ( vec_acc_a, ( empty_arg()) ), vec_acc_b) in
-  let body = Local ( (Decl (new_int_var (4) "x") ),
-		     Seq
-		       (Set (id_x , Intrinsics ((cuda_name, opencl_name)) ),
-			(If (LtBool ((id_x, id_n)),
-			     skel_args)
-			))) in
+  let body = 
+    Local ( 
+    (Decl (
+      new_int_var (4) "x") 
+    ),
+    Seq
+      (Set (id_x , Intrinsics ((cuda_name, opencl_name)) ),
+       (If (LtBool ((id_x, id_n)),
+	    skel_args)
+       ))) in
   (params, body)
 
 let map2_skel =
@@ -672,7 +677,7 @@ let map2  ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=
      let n_info = ("n", new_int_var (0) "n", false) in
      let c_info = ("c", fst k3, true) in
      let final_ast = generate_from_skel k2 map2_skel (a_info :: b_info :: n_info :: c_info :: []) [] in
-     
+       
      let res = res_creation ker (map2_ml_kern k1 k3) k1 final_ast k3 in
      let target =
        match device.Devices.specific_info with
@@ -753,75 +758,99 @@ let generate ((ker: ('a, 'b, (int -> 'd), 'f, 'g) sarek_kernel)) ?dev:(device=(S
   Retourne l'Ast d'un squelette de reduce
 *)
 let reduce_skel =
-  let (cuda_name, opencl_name) = ("blockIdx.x*blockDim.x+threadIdx.x", "get_global_id(0)") in  
-  let params = params (concat (new_int_vec_var (0) "a")
-			 (concat (new_int_var (1) "n")
-			    (concat (new_int_vec_var (7) "b") (empty_arg()))))
+  let (cu_name, cl_name) = ("blockIdx.x*blockDim.x+threadIdx.x", "get_global_id(0)") in  
+  let (cu_threadx, cl_threadx) = ("threadIdx.x", "get_local_id(0)") in
+  let (cu_floor, cl_floor) = ("floor", "floor") in
+  let params = params ( concat (new_int_vec_var (0) "a")
+			  (concat (new_int_var (9) "n_i")
+		             ( concat (new_int_vec_var (7) "b") (empty_arg()))))
   in
-  let id_a = IntId ("a", (0)) in
-  let id_n = IntId ("n", (1)) in
-  let id_x = IntId ("idx", (2)) in
-  let id_n2 = IntId ("n2", (3)) in
-  let id_n3 = IntId ("n3", (4)) in
-  let id_pos = IntId ("pos", (5)) in
-  let id_i = IntId ("i", (6)) in
-  let id_b = IntId ("b", (7)) in
-  let id_tmp = IntId ("spoc_var0", (8)) in
-  let vec_acc_tmp1 = IntVecAcc (id_tmp, id_x) in
+  let id_a     = IntId ("a",   (0)) in
+  let id_n     = IntId ("n",   (1)) in
+  let id_x     = IntId ("idx", (2)) in
+  let id_n2    = IntId ("n2",  (3)) in
+  let id_n3    = IntId ("n3",  (4)) in
+  let id_pos   = IntId ("pos", (5)) in
+  let id_i     = IntId ("i",   (6)) in
+  let id_b     = IntId ("b",   (7)) in
+  let id_local = IntId ("idl", (9)) in
+  let id_tmp   = IntId ("spoc_var0", (8)) in
+  let vec_acc_tmp1 = IntVecAcc (id_tmp, id_local) in
   let vec_acc_tmp2 = IntVecAcc (id_tmp, id_pos) in
   let vec_acc_a = IntVecAcc (id_a, id_x) in
   let skel_args = Skel (Concat ( vec_acc_tmp1, ( Concat ( vec_acc_tmp2,  (empty_arg())))), vec_acc_tmp1) in
+  let final_skel_args = Skel (Concat ( IntVecAcc (id_b, Int 0), (Concat ( IntVecAcc (id_tmp, Int 0), (empty_arg())))), IntVecAcc (id_b, Int 0)) in
 
   let body = Local ( Local (
     Decl (IdName("tmp")),
     Local(
       Decl (new_int_var (2) "idx"),
-      Local ( 
-	Decl (new_int_var (3) "n2"),
+      Local (
+	Decl (new_int_var (9) "idl"),
 	Local ( 
-	  Decl (new_int_var (4) "n3"),
+	  Decl (new_int_var (1) "n"),
 	  Local (
-            Decl (new_int_var (5) "pos"),
-	    Seq (
-    	      Set (id_x , Intrinsics ((cuda_name, opencl_name)) ),
-	      Seq (
-		Acc (IntVecAcc (id_tmp, id_x), vec_acc_a),
+	    Decl (new_float_var (3) "n2"),
+	    Local ( 
+	      Decl (new_float_var (4) "n3"),
+	      Local (
+		Decl (new_int_var (5) "pos"),
 		Seq (
-		  SyncThread,
+    		  Set (id_x , Intrinsics ((cu_name, cl_name)) ),
 		  Seq (
-		    Set (id_n2, id_n),
+		    Set (id_local, Intrinsics ((cu_threadx, cl_threadx))),
 		    Seq (
-		      Set (id_n3, id_n),
+		      Acc (IntVecAcc (id_tmp, id_local), vec_acc_a),
 		      Seq (
-			Set (id_pos, Int (0)),
-			
-			While ( 
-			  GtBool (id_n3, Int (0)),
+			SyncThread,
+			Seq (
+			  Acc (IntVecAcc (id_b, Int 0), Int (1)),
 			  Seq (
-			    Acc (id_n3, Div (id_n2, Int (2))),
+			    Set (id_n, Decl(IdName ("int_n"))),
 			    Seq (
-			      Ife (
-				EqBool (Mod (id_n2, Int (2)), Int (0)),
-				Acc (id_n2, id_n3),
-				Acc (id_n2, Plus (id_n3, Int (1)))
-			      ),
-			      If (
-				LtBool (id_x, id_n2),
-				Ife (
-				  And (
-				    Or (LtBool (id_n2, id_n3), 
-					GtBool (id_n2, id_n3)),
-				    GtBool (id_x, Int (0))
-				  ),
-				  Seq (
-				    Acc (id_pos, Plus (id_x, id_n3)),
-				    skel_args
-				  ),
-				  If (
-				    EqBool (id_n2, id_n3),
+			      Set (id_n2, id_n),
+			      Seq (
+				Set (id_n3, id_n),
+				Seq (
+				  Set (id_pos, Int (0)),
+				  
+				  While ( 
+				    GtBool (id_n3, Int (0)),
 				    Seq (
-				      Acc (id_pos, Plus (id_x, id_n2)),
-				      skel_args
+				      Acc (
+					id_n3,
+					App (Intrinsics ((cu_floor, cl_floor)),
+					       (Array.make 1 (Div (id_n2, Int (2))))
+					)
+				      ),
+				      Seq (
+					Ife (
+					  EqBool (Mod (CastInt(id_n2), Int (2)), Int (0)),
+					  Acc (id_n2, id_n3),
+					  Acc (id_n2, Plus (id_n3, Int (1)))
+					),
+					If (
+					  LtBool (id_local, id_n2),
+					  Ife (
+					    And (
+					      Or (LtBool (id_n2, id_n3), 
+						  GtBool (id_n2, id_n3)),
+					      GtBool (id_local, Int (0))
+					    ),
+					    Seq (
+					      Acc (id_pos, Plus (id_local, id_n3)),
+					      skel_args
+					    ),
+					    If (
+					      EqBool (id_n2, id_n3),
+					      Seq (
+						Acc (id_pos, Plus (id_local, id_n2)),
+						skel_args
+					      )
+					    )
+					  )
+					)
+				      )
 				    )
 				  )
 				)
@@ -843,7 +872,15 @@ let reduce_skel =
     Seq (
       SyncThread,
       Seq (
-	Acc (IntVecAcc (id_b, (Int (0))), IntVecAcc (id_tmp, (Int 0))),
+	If (EqBool(id_local, Int 0),
+	    Seq (
+	      final_skel_args,
+	      Seq (
+		Acc (IntVecAcc (id_b, Int 0), Min (IntVecAcc (id_b, Int 0), Int 1)),
+		Empty
+	      )
+	    )
+	),
 	Empty
       )
     )
@@ -869,11 +906,15 @@ let reduce ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device
      (* Recuperation d'un ast squelette de map*)
      let (skel_param, skel_body) = reduce_skel  in
      let a_info = ("a", type_of_param param 0, true) in
-     let n_info = ("n", new_int_var (0) "n", false) in
+     let n_info = ("n_i", new_int_var (0) "n_i", false) in
      let b_info = ("b", fst k3, true) in
+     
+     (* On recupere la taille du shared (egale au nombre de threads dans un bloc) *)
+     let (block, grid) = thread_creation device (Vector.length vec_in) in
+     let tmp_var = ("tmp", Arr(0, (Int (block.blockX)), EFloat32, Shared)) in
+     let n_var = ("int_n", Int (block.blockX)) in
+     let final_ast = generate_from_skel k2 reduce_skel (a_info :: n_info :: b_info :: []) (tmp_var :: n_var :: []) in
 
-
-     let final_ast = generate_from_skel k2 reduce_skel (a_info :: n_info :: b_info :: []) [("tmp", Arr(0, (Int (Vector.length vec_in)), EFloat32, Shared))]in
      (* TODO : VERSION CPU (ici code du map pour exemple) *)
      let ml_kern = (let reduce = fun f k a b ->
        let c = Vector.create k (Vector.length a) in
@@ -890,14 +931,14 @@ let reduce ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device
        | Devices.OpenCLInfo _ -> Devices.OpenCL in
 
      
-     ignore(gen res); 
+     ignore(gen ~only:target res); 
     
+     let open Kernel in
      let spoc_ker, kir_ker = res in
      let info_param1 = Param(arg_type_of_vec vec_in, 0) in
      let info_param2 = SizeOf(0) in
      let info_param3 = NewVec(arg_type_of_vec_kind (snd k3), 0) in
      let final_kern = skel_kern_creation res (info_param1 :: info_param2 :: info_param3 :: []) in
-     let open Kernel in
      spoc_ker#compile ~debug:true device;
      let param1 = VParam(vec_in) in
      let retour = (run_skel final_kern (param1 :: []) device) in

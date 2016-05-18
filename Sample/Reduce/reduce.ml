@@ -8,13 +8,9 @@ open Skeleton
   let open Std in
   let open Math.Float32 in
   let idx = global_thread_id in
-  let mutable n2 = n in
-  let mutable n3 = n in
+  let mutable n2 = n_local in
+  let mutable n3 = n_local in
   let mutable pos = 0 in
-
-  a.[<idx>] <- 1.;
-
-  Skel (a.[<idx>] 1.) -> a.[<idx>]
 
   while n3 > 0 do
     n3 := n2 / 2;
@@ -29,24 +25,26 @@ open Skeleton
       else if n2 = n3 then
         pos := idx + n2;
   done
+
+  b[0] += tmp[0]
 ;;
 
 
 
 Kirc.gen reduce;;
 *)
-let a = Vector.create Vector.float32 10;;
+let a = Vector.create Vector.float32 200;;
 
 for i = 0 to Vector.length a - 1 do 
   Spoc.Mem.set a i 1.;
 done;;
 
-let c = reduce (kern a b -> a +. b) a;;
+let c = reduce (kern a b -> a *. b) a;;
 
 Printf.printf "res = %f\n" c;;
 
-for i = 0 to Vector.length a - 1 do
+(*for i = 0 to Vector.length a - 1 do
   Printf.printf "%f" (Spoc.Mem.get a i)
 done;;
-Printf.printf "\n";;
+Printf.printf "\n";;*)
 
