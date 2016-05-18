@@ -890,7 +890,7 @@ let reduce ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device
        | Devices.OpenCLInfo _ -> Devices.OpenCL in
 
      
-     ignore(gen res); 
+     ignore(gen ~only:target res); 
     
      let spoc_ker, kir_ker = res in
      let info_param1 = Param(arg_type_of_vec vec_in, 0) in
