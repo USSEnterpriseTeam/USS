@@ -3,8 +3,8 @@ open Kirc
 
 open Skeleton
 
-(*
-let reduce = kern a n ->
+
+(*let reduce = kern a n ->
   let open Std in
   let open Math.Float32 in
   let idx = global_thread_id in
@@ -13,6 +13,8 @@ let reduce = kern a n ->
   let mutable pos = 0 in
 
   a.[<idx>] <- 1.;
+
+  Skel (a.[<idx>] 1.) -> a.[<idx>]
 
   while n3 > 0 do
     n3 := n2 / 2;
@@ -33,7 +35,7 @@ let reduce = kern a n ->
 
 Kirc.gen reduce;;
 *)
-let a = Vector.create Vector.float32 11;;
+let a = Vector.create Vector.float32 10;;
 
 for i = 0 to Vector.length a - 1 do 
   Spoc.Mem.set a i 1.;
@@ -47,3 +49,4 @@ for i = 0 to Vector.length a - 1 do
   Printf.printf "%f" (Spoc.Mem.get a i)
 done;;
 Printf.printf "\n";;
+
