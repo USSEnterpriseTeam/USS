@@ -465,7 +465,7 @@ let rewrite ker =
     | Match (s,a,b) -> Match (s,aux a, 
                               Array.map (fun (i,ofid,e) -> (i,ofid,aux e)) b)
     | SyncThread -> kern
-    
+    | CastInt a -> CastInt (aux a)
 
   in
   let kern = ref (aux ker) in

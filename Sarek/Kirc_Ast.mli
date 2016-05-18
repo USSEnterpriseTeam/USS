@@ -79,6 +79,7 @@ type k_ext =
   | Unit
   | Skel of k_ext * k_ext
   | SyncThread
+  | CastInt of k_ext
       
 and case = int * (string*string*int) option * k_ext
 

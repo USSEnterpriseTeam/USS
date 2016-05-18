@@ -121,7 +121,7 @@ type  k_ext =
   | Unit
   | Skel of k_ext * k_ext
   | SyncThread
-  
+  | CastInt of k_ext
 
 and case =  int * (string*string*int) option * k_ext
 
@@ -358,5 +358,7 @@ let print_ast a =
       aux (i+1) a;
     | SyncThread ->
       print i "SyncThread";
-	
+    | CastInt a ->
+      print i "(int)";
+      aux (i+1) a;
   in aux 0 a;;
