@@ -672,7 +672,7 @@ let map2  ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=
      let n_info = ("n", new_int_var (0) "n", false) in
      let c_info = ("c", fst k3, true) in
      let final_ast = generate_from_skel k2 map2_skel (a_info :: b_info :: n_info :: c_info :: []) [] in
-       
+     
      let res = res_creation ker (map2_ml_kern k1 k3) k1 final_ast k3 in
      let target =
        match device.Devices.specific_info with
