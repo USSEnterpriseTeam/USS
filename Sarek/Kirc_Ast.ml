@@ -60,6 +60,7 @@ type  k_ext =
   | Block of k_ext
   | Params of  k_ext
   | Plus of  k_ext* k_ext
+  | LeftBit of k_ext * k_ext
   | Plusf of  k_ext *  k_ext
   | Min of  k_ext* k_ext
   | Minf of  k_ext *  k_ext
@@ -149,7 +150,11 @@ let print_ast a =
       print i "Params";
       (aux (i+1) p)
     | Plus (a,b) ->
-      print i "Plus";
+       print i "Plus";
+      aux (i+1) a;
+      aux (i+1) b;
+    | LeftBit(a, b) ->
+       print i "LeftBit";
       aux (i+1) a;
       aux (i+1) b;
     | Plusf (a,b) ->

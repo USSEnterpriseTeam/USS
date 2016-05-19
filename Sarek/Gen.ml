@@ -189,6 +189,7 @@ module Generator (M:CodeGenerator) = struct
   | RecSet (r,v) ->
     (parse i r)^" = "^(parse i v)
   | Plus  (a,b) -> ((parse_int i a)^" + "^(parse_int i b))
+  | LeftBit (a, b) -> ((parse_int i a) ^" >> " ^(parse_int i b))
   | Plusf  (a,b) -> ((parse_float i a)^" + "^(parse_float i b))
   | Min  (a,b) -> ((parse_int i a)^" - "^(parse_int i b))
   | Minf  (a,b) -> ((parse_float i a)^" - "^(parse_float i b))

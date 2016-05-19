@@ -33,7 +33,7 @@ open Skeleton
 
 Kirc.gen reduce;;
 *)
-let a = Vector.create Vector.float32 200;;
+let a = Vector.create Vector.float32 20000;;
 
 for i = 0 to Vector.length a - 1 do 
   Spoc.Mem.set a i 1.;

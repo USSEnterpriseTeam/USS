@@ -283,7 +283,6 @@ let debug_print ((ker : ('a, 'b,'c,'d,'e)  sarek_kernel)) =
 
 
 
-
 let rewrite ker =
   let b = ref false in 
   let rec aux kern = 
@@ -294,7 +293,9 @@ let rewrite ker =
     | Params k -> 
       Params (aux k)
     | Plus (k1,k2) -> 
-      Plus (aux k1, aux k2)
+       Plus (aux k1, aux k2)
+    | LeftBit (k1, k2) ->
+       LeftBit (aux k1, aux k2) 
     | Plusf (k1,k2) -> 
       (match k1,k2 with
        | Float f1, Float f2 -> 
