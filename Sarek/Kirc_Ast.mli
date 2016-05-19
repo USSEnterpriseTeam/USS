@@ -18,7 +18,9 @@ type k_ext =
   | Block of k_ext
   | Params of k_ext
   | Plus of k_ext * k_ext
-  | LeftBit of k_ext * k_ext
+  | RightBit of k_ext * k_ext
+  | ExpBit of k_ext * k_ext
+  | AndBit of k_ext * k_ext
   | Plusf of k_ext * k_ext
   | Min of k_ext * k_ext
   | Minf of k_ext * k_ext

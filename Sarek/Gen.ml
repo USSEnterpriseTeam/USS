@@ -189,7 +189,9 @@ module Generator (M:CodeGenerator) = struct
   | RecSet (r,v) ->
     (parse i r)^" = "^(parse i v)
   | Plus  (a,b) -> ((parse_int i a)^" + "^(parse_int i b))
-  | LeftBit (a, b) -> ((parse_int i a) ^" >> " ^(parse_int i b))
+  | RightBit (a, b) -> ((parse_int i a) ^" >> " ^(parse_int i b))
+  | ExpBit (a, b) -> ((parse_int i a) ^ "^" ^ (parse_int i b))
+  | AndBit (a, b) -> ((parse_int i a) ^ "&" ^ (parse_int i b))
   | Plusf  (a,b) -> ((parse_float i a)^" + "^(parse_float i b))
   | Min  (a,b) -> ((parse_int i a)^" - "^(parse_int i b))
   | Minf  (a,b) -> ((parse_float i a)^" - "^(parse_float i b))
@@ -225,25 +227,25 @@ module Generator (M:CodeGenerator) = struct
   | IntVecAcc (vec,idx)  -> (parse i vec)^"["^(parse i idx)^"]"
   | SetV (vecacc,value)  -> (
       (parse i vecacc)^" = "^(parse i value)^";") 
-  |Int  a  -> string_of_int a
+  | Int  a  -> string_of_int a
   | Float f -> (string_of_float f)^"f"
   | GInt  a  -> Int32.to_string (a ())
   | GFloat  a  -> (string_of_float (a ()))^"f"
   | Double f -> string_of_float f
   | IntId (s,_) -> s
   | Intrinsics gv -> M.parse_intrinsics gv
-  | Seq (a,b)  -> (parse i a)^"; \n"^(indent i)^(parse i b)
+  | Seq (a,b)  -> (parse i a)^"; \n"^(indent i)^(parse i b)^";"
   | Ife(a,b,c) -> "if ("^(parse i a)^"){\n"^(indent (i+1))^(parse (i+1) b)^";\n"^(indent i)^"}\n"^(indent i)^"else{\n"^(indent (i+1))^(parse (i+1) c)^";\n"^(indent i)^"}\n"^(indent i)
-  | If (a,b) -> "if ("^(parse i a)^")"^"{\n"^(indent (i+1))^(parse (i+1) b)^"\n"^(indent i)^"}"^(indent i)
+  | If (a,b) -> "if ("^(parse i a)^")"^"{\n"^(indent (i+1))^(parse (i+1) b)^";\n"^(indent i)^"}"^(indent i)
   | Or (a,b) -> "("^(parse i a)^" || "^(parse i b)^")"
   | And (a,b) -> "("^(parse i a)^" && "^(parse i b)^")"
-  | Not (a) -> "!"^(parse i a)
+  | Not (a) -> "!("^(parse i a)^")"
   | EqCustom (n,v1,v2) ->
     let v1 = parse 0 v1
     and v2 = parse 0 v2 in
     (*"switch "^v1^"."^n^"_starek_tag"^*)
     n^"("^v1^", "^v2^")"
-  | EqBool (a,b) -> (parse i a)^" == "^(parse i b)
+  | EqBool (a,b) -> "("^(parse i a)^") == ("^(parse i b)^")"
   | LtBool (a,b) -> (parse i a)^" < "^(parse i b)
   | GtBool (a,b) -> (parse i a)^" > "^(parse i b)
   | LtEBool (a,b) -> (parse i a)^" <= "^(parse i b)

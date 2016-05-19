@@ -294,8 +294,12 @@ let rewrite ker =
       Params (aux k)
     | Plus (k1,k2) -> 
        Plus (aux k1, aux k2)
-    | LeftBit (k1, k2) ->
-       LeftBit (aux k1, aux k2) 
+    | RightBit (k1, k2) ->
+       RightBit (aux k1, aux k2)
+    | AndBit (k1, k2) ->
+       AndBit (aux k1, aux k2)
+    | ExpBit (k1, k2) ->
+       ExpBit (aux k1, aux k2)
     | Plusf (k1,k2) -> 
       (match k1,k2 with
        | Float f1, Float f2 -> 
@@ -467,6 +471,8 @@ let rewrite ker =
                               Array.map (fun (i,ofid,e) -> (i,ofid,aux e)) b)
     | SyncThread -> kern
     | CastInt a -> CastInt (aux a)
+    | Skel (a, b) ->
+       Skel (aux a, aux b)
 
   in
   let kern = ref (aux ker) in
