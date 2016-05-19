@@ -1,0 +1,115 @@
+taille 256 skel:
+           generation  execution
+generate   0.0726      0.000168
+map        0.0544      0.000389
+
+taille 512 skel:
+generate   0.0742      0.000181
+map        0.0526      0.000395
+
+taille 1024 skel:
+generate   0.0719      0.000172
+map        0.0472      0.000319
+
+taille 2048 skel:
+generate   0.0728      0.000152
+map        0.051842    0.000457
+
+taille 4096 skel:
+generate   0.0721      0.000169
+map        0.0508      0.000477
+
+taille 8192 skel:
+generate   0.0743      0.000171
+map        0.0501      0.000523
+
+taille 16384 skel:
+generate   0.0755     0.000170
+map        0.0554     0.000592
+
+taille 32768 skel:
+generate   0.0756     0.000171
+map        0.0542     0.000723
+
+taille 65536 skel:
+generate   0.0756     0.000172
+map        0.0560     0.00109
+
+taille 131072 skel:
+generate   0.0757     0.000172
+map        0.0528     0.00175
+
+taille 262144 skel:
+generate   0.0721     0.000165
+map        0.052023   0.00243
+
+taille 524288 skel:
+generate  0.0722      0.000174
+map       0.0530      0.00524
+
+taille 1048576 skel:
+generate  0.0754      0.000168
+map       0.0554      0.00955
+
+taille 2097152 skel:
+generate  0.0764      0.000185
+map       0.0630      0.0339
+
+taille 4194304 skel:
+generate  0.0807      0.000158
+map       0.0657      0.0326
+
+taille 8388608 skel:
+generate  0.0726      0.000172
+map       0.0698      0.0624
+
+
+Sequentiel
+taille : 256
+temps  gen = 0.000022
+temps  map = 0.000032
+taille : 512
+temps  gen = 0.000037
+temps  map = 0.000060
+taille : 1024
+temps  gen = 0.000063
+temps  map = 0.000121
+taille : 2048
+temps  gen = 0.000122
+temps  map = 0.000246
+taille : 4096
+temps  gen = 0.000243
+temps  map = 0.000482
+taille : 8192
+temps  gen = 0.000486
+temps  map = 0.001061
+taille : 16384
+temps  gen = 0.000961
+temps  map = 0.001969
+taille : 32768
+temps  gen = 0.003609
+temps  map = 0.003303
+taille : 65536
+temps  gen = 0.003270
+temps  map = 0.008326
+taille : 131072
+temps  gen = 0.009084
+temps  map = 0.013191
+taille : 262144
+temps  gen = 0.014165
+temps  map = 0.027876
+taille : 524288
+temps  gen = 0.025928
+temps  map = 0.052545
+taille : 1048576
+temps  gen = 0.051088
+temps  map = 0.104511
+taille : 2097152
+temps  gen = 0.100704
+temps  map = 0.225625
+taille : 4194304
+temps  gen = 0.285535
+temps  map = 0.579145
+taille : 8388608
+temps  gen = 0.551703
+temps  map = 1.161168

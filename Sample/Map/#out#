@@ -1,0 +1,48 @@
+taille : 256
+temps skel gen = 0.000022
+temps skel map = 0.000032
+taille : 512
+temps skel gen = 0.000037
+temps skel map = 0.000060
+taille : 1024
+temps skel gen = 0.000063
+temps skel map = 0.000121
+taille : 2048
+temps skel gen = 0.000122
+temps skel map = 0.000246
+taille : 4096
+temps skel gen = 0.000243
+temps skel map = 0.000482
+taille : 8192
+temps skel gen = 0.000486
+temps skel map = 0.001061
+taille : 16384
+temps skel gen = 0.000961
+temps skel map = 0.001969
+taille : 32768
+temps skel gen = 0.003609
+temps skel map = 0.003303
+taille : 65536
+temps skel gen = 0.003270
+temps skel map = 0.008326
+taille : 131072
+temps skel gen = 0.009084
+temps skel map = 0.013191
+taille : 262144
+temps skel gen = 0.014165
+temps skel map = 0.027876
+taille : 524288
+temps skel gen = 0.025928
+temps skel map = 0.052545
+taille : 1048576
+temps skel gen = 0.051088
+temps skel map = 0.104511
+taille : 2097152
+temps skel gen = 0.100704
+temps skel map = 0.225625
+taille : 4194304
+temps skel gen = 0.285535
+temps skel map = 0.579145
+taille : 8388608
+temps skel gen = 0.551703
+temps skel map = 1.161168

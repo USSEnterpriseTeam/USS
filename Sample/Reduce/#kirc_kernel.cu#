@@ -1,0 +1,60 @@
+__device__ float spoc_fadd ( float a, float b ) { return (a + b);}
+__device__ float spoc_fminus ( float a, float b ) { return (a - b);}
+__device__ float spoc_fmul ( float a, float b ) { return (a * b);}
+__device__ float spoc_fdiv ( float a, float b ) { return (a / b);}
+__device__ int logical_and (int a, int b ) { return (a & b);}
+__device__ int spoc_powint (int a, int b ) { return ((int) pow (((double) a), ((double) b)));}
+__device__ int spoc_xor (int a, int b ) { return (a^b);}
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    __global__ void spoc_dummy (  float* a, int n,  float* b ) {
+	__shared__ float spoc_var0[10];
+	int idx;
+	int n2;
+	int n3;
+	int pos;
+	idx = blockIdx.x*blockDim.x+threadIdx.x ;
+	spoc_var0[idx] = a[idx] ;
+	__syncthreads() ;
+	n2 = n ;
+	n3 = n ;
+	pos = 0 ;
+	while (n3 > 0){
+	    n3 = n2 / 2 ;
+	    if (n2 % 2 == 0){
+		n2 = n3;
+	    }
+	    else{
+		n2 = n3 + 1;
+	    }
+	    ;
+	    if (idx < n2){
+		if (((n2 < n3 || n2 > n3) && idx > 0)){
+		    pos = idx + n3 ;
+		    spoc_var0[idx] = spoc_var0[idx] + spoc_var0[pos];;
+		}
+		else{
+		    if (n2 == n3){
+			pos = idx + n2 ;
+			spoc_var0[idx] = spoc_var0[idx] + spoc_var0[pos];
+		    }        ;
+		}
+
+	    }    ;}
+
+
+
+
+	;
+	__syncthreads() ;
+	b[0] = spoc_var0[0] ;
+
+
+    }
+#ifdef __cplusplus
+}
+#endif

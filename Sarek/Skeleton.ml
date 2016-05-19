@@ -23,7 +23,8 @@ type args_type =
   | VFloat64 
   | VComplex32 
   | VInt32 
-  | VInt64 
+  | VInt64
+  | Int32
 
 let arg_type_of_vec v =
   match Vector.kind v with
@@ -43,7 +44,7 @@ let arg_type_of_vec_kind v =
      
      
 type ('a, 'b) info_args =
-  | SizeOf of int
+  | SizeOf of int      
   | Param of args_type * int
   | NewVec of args_type * int
   | NewSizedVec of args_type * int
@@ -371,7 +372,7 @@ let get_param params id =
        if((!nb - 1) = id) then
 	 head	 
        else
-	   aux queue id
+	 aux queue id
     | [] -> Printf.printf "%d -> %d" id !nb; assert false
   in
   aux params id
@@ -386,6 +387,11 @@ let arg_of_arg_info arg elem =
      | VComplex32 -> Kernel.VComplex32 v
      | VInt32 -> Kernel.VInt32 v
      | VInt64 -> Kernel.VInt64 v)
+  | IParam (i) ->
+     (match arg with
+     | Int32 -> arg_of_int i
+     | _ -> assert false
+     ) 
   | _ -> assert false     
 
 
@@ -402,12 +408,34 @@ let pow_2_sup (x: int) =
   let d = log (float_of_int (x - 1)) /. (log 2.) in
   let i = int_of_float d in
   int_of_float (2. ** (float_of_int i +. 1.)) 
-     
+    
 (*
   Calcule la taille des block necessaire sur un tableau a une entree
   @retour (block, grid)
 *)
 let thread_creation (device) (length: int) =
+  let open Kernel in
+  let block = {blockX = 1; blockY = 1; blockZ = 1}
+  and grid = {gridX = 1; gridY = 1; gridZ = 1} in
+  begin
+    let open Devices in (
+      match device.Devices.specific_info with
+      | Devices.CudaInfo cI ->
+	 block.blockX <- min cI.maxThreadsDim.x length;	 
+	 grid.gridX <- length / (block.blockX lsl 1);
+	 if(length mod (block.blockX lsl 1) > 0) then
+	   grid.gridX <- grid.gridX + 1
+      | Devices.OpenCLInfo oI ->
+	 block.blockX <- min (*oI.Devices.max_work_item_size.Devices.x*) 4096 length;	 
+	 grid.gridX <- length / (block.blockX lsl 1);	 
+	 if(length mod (block.blockX lsl 1) > 0) then
+	   grid.gridX <- grid.gridX + 1
+    )
+  end;
+  Printf.printf "block : %d, grid : %d\n" block.blockX grid.gridX;
+  (block, grid)    
+
+let thread_creation_pow2 (device) (length: int) =
   let open Kernel in
   let block = {blockX = 1; blockY = 1; blockZ = 1}
   and grid = {gridX = 1; gridY = 1; gridZ = 1} in
@@ -424,8 +452,8 @@ let thread_creation (device) (length: int) =
       | Devices.OpenCLInfo oI ->
 	 let threads = pow_2_sup (length) in
 	 let open Int32 in
-	 block.blockX <- min oI.Devices.max_work_item_size.Devices.x threads;	 
-	 grid.gridX <- length / (block.blockX lsl 1);
+	 block.blockX <- min (*oI.Devices.max_work_item_size.Devices.x*) 4096 threads;	 
+	 grid.gridX <- length / (block.blockX lsl 1);	 
 	 if(length mod (block.blockX lsl 1) > 0) then
 	   grid.gridX <- grid.gridX + 1
     )
@@ -433,6 +461,8 @@ let thread_creation (device) (length: int) =
   Printf.printf "block : %d, grid : %d\n" block.blockX grid.gridX;
   (block, grid)    
 
+
+    
 let load_cuda_args param_infos param device bin =
   let length_call = ref 0 in
   let offset = ref 0 in
@@ -490,9 +520,15 @@ let load_opencl_args param_infos param device clFun =
        nb := !nb + 1;
        let (b, c, outs) = create_params queue params in
        (b, c, VRetour(new_vec))
+    | (NewSizedVec(arg, length))::queue ->
+       let new_vec = Vector.create (get_arg_vec_kind arg) length ~dev:device in
+       Kernel.OpenCL.opencl_load_arg offset device clFun !nb (arg_of_vec new_vec);
+       nb := !nb + 1;
+       let (b, c, outs) = create_params queue params in
+       (b, c, VRetour(new_vec))
     | [] -> (offset, !length_call, RNull)
   in create_params param_infos param
-    
+  
 let run_skel (kern: ('a, 'b) skel_kernel) (params: (('c, 'd) param) list) (device) =
   let (ker, infos) = (kern.kirc_kern, kern.lauch_infos) in
   let rec aux params = 
@@ -517,6 +553,32 @@ let run_skel (kern: ('a, 'b) skel_kernel) (params: (('c, 'd) param) list) (devic
      let (block, grid) = thread_creation device length in
      Kernel.OpenCL.opencl_launch_grid bin grid block device.Devices.general_info 0;
      outs
+
+
+let run_skel_pow2 (kern: ('a, 'b) skel_kernel) (params: (('c, 'd) param) list) (device) =
+  let (ker, infos) = (kern.kirc_kern, kern.lauch_infos) in
+  let rec aux params = 
+    match params with
+    | p::queue ->
+       move_to_device p device;
+      aux queue
+    | [] -> []
+  in
+  let _ = aux params in
+  let open Kernel in
+  let (spoc_ker, kir_ker) = ker in
+  let bin = (Hashtbl.find (spoc_ker#get_binaries ()) device) in
+  match device.Devices.specific_info with
+  | Devices.CudaInfo cI ->
+     let (offset, extra, length, outs) = load_cuda_args infos params device bin in
+     let (block, grid) = thread_creation_pow2 device length in     
+     Kernel.Cuda.cuda_launch_grid offset bin grid block extra device.Devices.general_info 0;
+     outs
+  | Devices.OpenCLInfo _ ->
+     let (offset, length, outs) = load_opencl_args infos params device bin in
+     let (block, grid) = thread_creation_pow2 device length in
+     Kernel.OpenCL.opencl_launch_grid bin grid block device.Devices.general_info 0;
+     outs
        
 
 (*
@@ -537,14 +599,14 @@ let map_skel =
   let skel_args = Skel (Concat ( vec_acc_a, ( empty_arg()) ), vec_acc_b) in
   let body = 
     Local ( 
-    (Decl (
-      new_int_var (4) "x") 
-    ),
-    Seq
-      (Set (id_x , Intrinsics ((cuda_name, opencl_name)) ),
-       (If (LtBool ((id_x, id_n)),
-	    skel_args)
-       ))) in
+      (Decl (
+	new_int_var (4) "x") 
+      ),
+      Seq
+	(Set (id_x , Intrinsics ((cuda_name, opencl_name)) ),
+	 (If (LtBool ((id_x, id_n)),
+	      skel_args)
+	 ))) in
   (params, body)
 
 let map2_skel =
@@ -580,7 +642,7 @@ let generate_indice_skel =
   let id_a = IntId ("a", (1)) in
   let id_x = IntId ("x", (2)) in
   let vec_acc_a = IntVecAcc(id_a, id_x) in
-  let skel_args = Skel ( Concat (id_n, (empty_arg ()) ), vec_acc_a) in
+  let skel_args = Skel ( Concat (id_x, (empty_arg ()) ), vec_acc_a) in
   let body = Local ( (Decl (new_int_var (4) "x") ),
 		     Seq
 		       (Set (id_x , Intrinsics ((cuda_name, opencl_name)) ),
@@ -645,6 +707,7 @@ let map ((ker: ('a, 'b, ('c -> 'd), 'e, 'f) sarek_kernel)) ?dev:(device=(Spoc.De
   let (k1, k2, k3) = (k.ml_kern, k.body, k.ret_val) in
   match k2 with
   | Kern (param, body) ->
+     let begin_gen_ = Unix.gettimeofday() in
      let a_info = ("a", type_of_param param 0, true) in
      let n_info = ("n", new_int_var (0) "n", false) in
      let b_info = ("b", fst k3, true) in
@@ -664,9 +727,16 @@ let map ((ker: ('a, 'b, ('c -> 'd), 'e, 'f) sarek_kernel)) ?dev:(device=(Spoc.De
      let final_kern = skel_kern_creation res (info_param1 :: info_param2 :: info_param3 :: []) in
      let open Kernel in 
      spoc_ker#compile ~debug:false device;
+     let begin_exec_ = Unix.gettimeofday() in
+     Printf.printf ("Temps skel gen = %f\n") (begin_exec_ -. begin_gen_);
      let param1 = VParam(vec_in) in  
-     (run_skel final_kern (param1 :: []) device)
-   | _ -> failwith "malformed Kernel"
+     let ret = (run_skel final_kern (param1 :: []) device) in
+     let end_exec_ = Unix.gettimeofday() in
+     Printf.printf ("Temps skel exec = %f\n") (end_exec_ -. begin_exec_);
+     (match (ret) with
+     | VRetour(x) -> x
+     | _ -> assert false)
+  | _ -> failwith "malformed Kernel"
 
 
 let map2_ml_kern k1 k3 =
@@ -678,7 +748,7 @@ let map2_ml_kern k1 k3 =
     c
   in map2 (k1) (snd k3)
 
-      
+  
 let map2  ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=(Spoc.Devices.init ()).(0)) (vec_in1 : ('c, 'i) Vector.vector) (vec_in2 : ('d, 'k) Vector.vector)  =
   let ker2, k = ker in
   let (k1, k2, k3) = (k.ml_kern, k.body, k.ret_val) in
@@ -690,7 +760,7 @@ let map2  ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=
      let n_info = ("n", new_int_var (0) "n", false) in
      let c_info = ("c", fst k3, true) in
      let final_ast = generate_from_skel k2 map2_skel (a_info :: b_info :: n_info :: c_info :: []) [] in
-       
+     
      let res = res_creation ker (map2_ml_kern k1 k3) k1 final_ast k3 in
      let target =
        match device.Devices.specific_info with
@@ -720,11 +790,12 @@ let map2  ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=
   | _ -> failwith "malformed Kernel"
 
 
-let generate ((ker: ('a, 'b, (int -> 'd), 'f, 'g) sarek_kernel)) ?dev:(device=(Spoc.Devices.init()).(0)) (size_in: int) = 
+let generate ((ker: ('a, 'b, (float -> 'd), 'f, 'g) sarek_kernel)) ?dev:(device=(Spoc.Devices.init()).(0)) (size_in: int) = 
   let ker2, k = ker in
   let (k1, k2, k3) = (k.ml_kern, k.body, k.ret_val) in
   match k2 with
   | Kern (param, body) ->
+     let begin_time = Unix.gettimeofday() in
      let (skel_param, skel_body) = generate_indice_skel  in       
      let n_info = ("n", new_int_var (0) "n", false) in
      let a_info = ("a", fst k3, true) in	  
@@ -733,7 +804,7 @@ let generate ((ker: ('a, 'b, (int -> 'd), 'f, 'g) sarek_kernel)) ?dev:(device=(S
      let ml_kern = (let generate = fun f k n ->
        let c = Vector.create k (n) in
        for i = 0 to (n - 1) do
-	 Mem.unsafe_set c i ( f (i))
+	 Mem.unsafe_set c i ( f (float_of_int i))
        done;
        c
 		    in generate (k1) (snd k3)) in
@@ -753,7 +824,11 @@ let generate ((ker: ('a, 'b, (int -> 'd), 'f, 'g) sarek_kernel)) ?dev:(device=(S
      let spoc_ker, kir_ker = res in
      let open Kernel in
      spoc_ker#compile ~debug:false device;
+     let end_time = Unix.gettimeofday() in
+     Printf.printf ("temps skel generation = %f\n") (end_time -. begin_time);
+     let begin_exec_ = Unix.gettimeofday() in
      let (block, grid ) = thread_creation device size_in in
+     Printf.printf ("nb bloc %d") (block.blockX * grid.gridX);
      let bin = (Hashtbl.find (spoc_ker#get_binaries ()) device) in
      let offset = ref 0 in
      (* Passage des parametre au kernel *)
@@ -770,11 +845,13 @@ let generate ((ker: ('a, 'b, (int -> 'd), 'f, 'g) sarek_kernel)) ?dev:(device=(S
 	Kernel.OpenCL.opencl_load_arg offset device clFun 0 (arg_of_int size_in);
 	Kernel.OpenCL.opencl_load_arg offset device clFun 1 (arg_of_vec vec_out);
 	Kernel.OpenCL.opencl_launch_grid clFun grid block device.Devices.general_info 0
-       );
+     );
+     let end_exec_ = Unix.gettimeofday() in
+     Printf.printf ("Temps skel exec = %f\n") (end_exec_ -. begin_exec_);
      vec_out		
   | _ -> failwith "malformed Kernel"
-  
-    
+     
+     
 (*
   Retourne l'Ast d'un squelette de reduce
 *)
@@ -911,7 +988,7 @@ let reduce_skel =
   in
   (params, body)
     
-		     
+    
 let rec print_list list = 
   if list != [] then
     let (t1, t2) = List.hd list in
@@ -947,7 +1024,7 @@ let reduce ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device
        done;
        c
 		    in reduce (k1) (snd k3)) in
-       
+     
      let res = res_creation ker ml_kern k1 final_ast k3 in
      let target =
        match device.Devices.specific_info with
@@ -956,12 +1033,12 @@ let reduce ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device
 
      
      ignore(gen ~only:target res); 
-    
+     
      let open Kernel in
      let spoc_ker, kir_ker = res in
      let info_param1 = Param(arg_type_of_vec vec_in, 0) in
      let info_param2 = SizeOf(0) in
-     let info_param3 = NewVec(arg_type_of_vec_kind (snd k3), 0) in
+     let info_param3 = NewSizedVec(arg_type_of_vec_kind (snd k3), 1) in
      let final_kern = skel_kern_creation res (info_param1 :: info_param2 :: info_param3 :: []) in
      spoc_ker#compile ~debug:true device;
      let end_time = Unix.gettimeofday() in
@@ -976,6 +1053,160 @@ let reduce ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device
      | _ -> assert false)
   | _ -> failwith "malformed Kernel"
 
+
+let stencil_skel =
+  let params = params (concat (new_int_vec_var (0) "a")
+			 (concat (new_int_var (1) "ray")
+			    (concat (new_int_var (2) "n")
+			       (concat (new_int_vec_var (3) "b")
+				  (empty_arg())))))
+  in
+  let cu_index = "blockIdx.x * blockDim.x + threadIdx.x" in
+  let cl_index = "get_global_id(0)" in
+  let cu_thread_x = "threadIdx.x" in
+  let cu_blockDim = "blockDim.x" in
+  let cl_blockDim = "get_local_size(0)" in
+  let cl_thread_x = "get_local_id(0)" in
+  let id_a = IntId("a", (0)) in
+  let id_b = IntId("b", (3)) in
+  let id_ray = IntId ("ray", (1)) in
+  let id_n = IntId ("n", (2)) in
+  let id_tmp = IntId("spoc_var0", (4)) in
+  let id_si = IntId("s_index", (5)) in
+  let id_x = IntId("id_x", (6)) in
+  let id_l = IntId ("id_l", (7)) in
+  let id_res = IntId ("result", (8)) in
+  let id_i = IntId ("i", (9)) in
+  let block_dim = Intrinsics ((cu_blockDim, cl_blockDim)) in
+  let skel_args = Skel (Concat (id_res, (Concat (IntVecAcc (id_tmp, Plus (id_si, id_i)), empty_arg()))), id_res) in
+  let body = Local ( Local (
+    Decl (IdName ("tmp")),
+    Local (
+      Decl(new_int_var (5) "s_index"),
+      Local (
+	Decl (new_int_var (6) "id_x"),
+	Local (
+	  Decl (new_int_var (8) "result"),
+	  Local (
+	    Decl (new_int_var (7) "id_l"),
+	    Local (
+	      Decl (new_int_var (9) "i"),
+	      Seq (
+		Set (id_l, Intrinsics ((cu_thread_x, cl_thread_x))), 
+		Seq (
+		  Set (id_si, Plus (id_ray, Intrinsics ((cu_thread_x, cl_thread_x)))),
+		  Seq (
+		    Set (id_x, Intrinsics ((cu_index, cl_index))),
+		    Ife (LtBool(id_x, id_n),			 
+			 Seq (
+			   If (LtBool (id_l, id_ray),
+				 Seq (
+				   Ife (GtBool (Min (id_x, id_ray), Int 0),
+					Acc (IntVecAcc (id_tmp, Min(id_si, id_ray)),
+					     IntVecAcc (id_a, Min (id_x, id_ray))),			   
+					Acc (IntVecAcc (id_tmp, Min (id_si, id_ray)),
+					     IntVecAcc (id_a, Min (id_n, Plus (id_ray, id_l))))
+				   ),
+				   Ife (GtEBool (Plus (id_x, block_dim), id_n),
+					Acc (IntVecAcc (id_tmp, Plus (id_si, block_dim)),
+					     IntVecAcc (id_a, id_l)),
+					Acc (IntVecAcc (id_tmp, Plus (id_si, block_dim)),
+					     IntVecAcc (id_a, Plus (id_x, block_dim))
+					)			   
+				   )
+				 )
+			   ), 			 	    
+			   Seq (
+			     Acc (IntVecAcc (id_tmp, id_si), IntVecAcc (id_a, id_x)),
+			     Seq (
+			       SyncThread,
+			       Seq (
+				 Set (id_res, Int 0),
+				 Seq (
+				   Seq (
+				     Set (id_i, Min( Int 0, id_ray)),
+				     While (LtEBool (id_i, id_ray),
+					    Seq (
+					      skel_args,
+					      Set (id_i, Plus (id_i, Int 1))
+					    )
+				     )
+				   ),
+				   Seq (Acc (IntVecAcc (id_b, id_x), id_res), Empty)
+				 )
+			       )
+			     )
+			   )
+			 ),
+			 SyncThread
+		    )	    		    	 
+		  )
+		)
+		)
+	      )
+	    )
+	)
+      )
+    )      
+  ),Empty
+  )    
+  in
+  (params, body)  
+
+let stencil ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=(Spoc.Devices.init()).(0)) (vec_in: ('c, 'i) Vector.vector) (ray: int) : ('e, 'j) Vector.vector =
+  let ker2, k = ker in
+  let (k1, k2, k3) = (k.ml_kern, k.body, k.ret_val) in
+  match k2 with
+  | Kern (param, body) ->
+     (* Recuperation d'un ast squelette de map*)
+     let begin_time = Unix.gettimeofday() in
+     let a_info = ("a", type_of_param param 0, true) in
+     let ray_info = ("ray", new_int_var (1) "ray", false) in
+     let n_info = ("n", new_int_var (2) "n", false) in
+     let b_info = ("b", fst k3, true) in
+     
+     (* On recupere la taille du shared (egale au nombre de threads dans un bloc) *)
+     let (block, grid) = thread_creation device (Vector.length vec_in) in
+     let tmp_var = ("tmp", Arr(0, (Int (block.blockX + 2 * ray)), EFloat32, Shared)) in
+     let final_ast = generate_from_skel k2 stencil_skel (a_info :: ray_info :: n_info :: b_info :: []) (tmp_var :: []) in
+
+     (* TODO : VERSION CPU (ici code du map pour exemple) *)
+     let ml_kern = (let reduce = fun f k a b ->
+       let c = Vector.create k (Vector.length a) in
+       for i = 0 to (Vector.length a - 2) do
+	 Mem.unsafe_set c i ( f (Mem.unsafe_get a i) (Mem.unsafe_get a (i + 1)))
+       done;
+       c
+		    in reduce (k1) (snd k3)) in
+     
+     let res = res_creation ker ml_kern k1 final_ast k3 in
+     let target =
+       match device.Devices.specific_info with
+       | Devices.CudaInfo _ -> Devices.Cuda
+       | Devices.OpenCLInfo _ -> Devices.OpenCL in
+     
+     ignore(gen ~only:target res); 
+     
+     let open Kernel in
+     let spoc_ker, kir_ker = res in
+     let info_param1 = Param (arg_type_of_vec vec_in, 0) in
+     let info_param2 = Param (Int32, 1) in
+     let info_param3 = SizeOf(0) in
+     let info_param4 = NewVec(arg_type_of_vec_kind (snd k3),  0) in
+     let final_kern = skel_kern_creation res (info_param1 :: info_param2 :: info_param3 :: info_param4 :: []) in
+     spoc_ker#compile ~debug:true device;
+     let end_time = Unix.gettimeofday() in
+     Printf.printf "transformation time %.3f\n" (end_time -. begin_time);
+     let begin_exec_time = Unix.gettimeofday() in
+     let param1 = VParam (vec_in) in
+     let param2 = IParam (ray) in
+     let retour = (run_skel final_kern (param1 :: param2 :: []) device) in
+     let end_exec_time = Unix.gettimeofday() in
+     Printf.printf "execution time %f\n" (end_exec_time -. begin_exec_time);
+     (match retour with
+     | VRetour(x) -> x           
+     | _ -> assert false)	  
+  | _ -> failwith "malformed Kernel"
      
 let reduce2_skel = 
   let params = params ( concat (new_int_vec_var (0) "a")
@@ -1014,45 +1245,45 @@ let reduce2_skel =
     	    Set (id_start , Intrinsics ((cu_start, cl_start)) ),
 	    Seq (
 	      Set (id_stride, block_dim),
-		Seq (
-		  Set (idl, Intrinsics ((cu_thread_x, cl_thread_x))),
-	    Seq ( Ife (LtBool (Plus (id_start, idl), id_n),
-		       Seq (Acc (IntVecAcc (id_tmp, idl), IntVecAcc (id_a, Plus (idl, id_start))),
-			    Empty),
-		       Seq (Acc (IntVecAcc (id_tmp, idl), Int (0)),
-			    Empty)
-	    ),
-		  Seq (
-		    Ife (LtBool(Plus( id_start , Plus (idl, block_dim)),
-				id_n),
-			 Seq (Acc (IntVecAcc (id_tmp, Plus (idl, block_dim)), IntVecAcc (id_a, Plus(id_start, Plus (idl, block_dim)))
-			 ),
-			      Empty),
-			 Seq (Acc (IntVecAcc (id_tmp, Plus (idl, block_dim)), Int(0)), Empty)
-		    ),
-		    Seq (
-		      While (GtBool (id_stride, Int(0)),
-			     Seq (
-			       SyncThread,
-			       Seq (
-				 If (LtBool(idl, id_stride),
-				     Seq (skel_args, Empty)
-				 ),
-				 Set (id_stride, LeftBit (id_stride, Int (1)))
-			       )
-			     )
-		      ),
+	      Seq (
+		Set (idl, Intrinsics ((cu_thread_x, cl_thread_x))),
+		Seq ( Ife (LtBool (Plus (id_start, idl), id_n),
+			   Seq (Acc (IntVecAcc (id_tmp, idl), IntVecAcc (id_a, Plus (idl, id_start))),
+				Empty),
+			   Seq (Acc (IntVecAcc (id_tmp, idl), Int (0)),
+				Empty)
+		),
 		      Seq (
-			If (EqBool (idl, Int(0)),
-			    Seq (Acc(IntVecAcc (id_b, block_Id), IntVecAcc (id_tmp, Int(0))), Empty) 
-		      ), Empty
-		    )
-		    )
-		  )
+			Ife (LtBool(Plus( id_start , Plus (idl, block_dim)),
+				    id_n),
+			     Seq (Acc (IntVecAcc (id_tmp, Plus (idl, block_dim)), IntVecAcc (id_a, Plus(id_start, Plus (idl, block_dim)))
+			     ),
+				  Empty),
+			     Seq (Acc (IntVecAcc (id_tmp, Plus (idl, block_dim)), Int(0)), Empty)
+			),
+			Seq (
+			  While (GtBool (id_stride, Int(0)),
+				 Seq (
+				   SyncThread,
+				   Seq (
+				     If (LtBool(idl, id_stride),
+					 Seq (skel_args, Empty)
+				     ),
+				     Set (id_stride, LeftBit (id_stride, Int (1)))
+				   )
+				 )
+			  ),
+			  Seq (
+			    If (EqBool (idl, Int(0)),
+				Seq (Acc(IntVecAcc (id_b, block_Id), IntVecAcc (id_tmp, Int(0))), Empty) 
+			    ), Empty
+			  )
+			)
+		      )
+		)
+	      )
 	    )
 	  )
-	  )
-	)
 	)
       )
     )
@@ -1060,8 +1291,8 @@ let reduce2_skel =
   )
   in
   (params, body)
-			 
-			     		    			   
+    
+    
 let reduce2 ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=(Spoc.Devices.init ()).(0)) (vec_in : ('c, 'i) Vector.vector) : 'e  =
   let ker2, k = ker in
   let (k1, k2, k3) = (k.ml_kern, k.body, k.ret_val) in
@@ -1074,28 +1305,27 @@ let reduce2 ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(devic
      let b_info = ("b", fst k3, true) in
      
      (* On recupere la taille du shared (egale au nombre de threads dans un bloc) *)
-     let (block, grid) = thread_creation device (Vector.length vec_in) in
+     let (block, grid) = thread_creation_pow2 device (Vector.length vec_in) in
      let tmp_var = ("tmp", Arr(0, (Int (block.blockX * 2)), EFloat32, Shared)) in
      let final_ast = generate_from_skel k2 reduce2_skel (a_info :: n_info :: b_info :: []) (tmp_var :: []) in
 
      (* TODO : VERSION CPU (ici code du map pour exemple) *)
      let ml_kern = (let reduce = fun f k a b ->
        let c = Vector.create k (Vector.length a) in
-       for i = 0 to (Vector.length a - 1) do
-	 Mem.unsafe_set c i ( f (Mem.unsafe_get a i) (Mem.unsafe_get b i))
+       for i = 0 to (Vector.length a - 2) do
+	 Mem.unsafe_set c i ( f (Mem.unsafe_get a i) (Mem.unsafe_get a (i + 1)))
        done;
        c
 		    in reduce (k1) (snd k3)) in
-       
+     
      let res = res_creation ker ml_kern k1 final_ast k3 in
      let target =
        match device.Devices.specific_info with
        | Devices.CudaInfo _ -> Devices.Cuda
        | Devices.OpenCLInfo _ -> Devices.OpenCL in
-
      
      ignore(gen ~only:target res); 
-    
+     
      let open Kernel in
      let spoc_ker, kir_ker = res in
      let info_param1 = Param(arg_type_of_vec vec_in, 0) in
@@ -1107,17 +1337,21 @@ let reduce2 ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(devic
      Printf.printf "transformation time %.3f\n" (end_time -. begin_time);
      let begin_exec_time = Unix.gettimeofday() in
      let param1 = VParam(vec_in) in
-     let retour = (run_skel final_kern (param1 :: []) device) in
+     let retour = (run_skel_pow2 final_kern (param1 :: []) device) in
      let end_exec_time = Unix.gettimeofday() in
-     Printf.printf "execution time %.3f\n" (end_exec_time -. begin_exec_time);
+     Printf.printf "execution time %f\n" (end_exec_time -. begin_exec_time);
      (match retour with
      | VRetour(x) ->	
-      let param1 = VParam(x) in
-	let final_retour = (run_skel final_kern (param1 :: []) device) in
+	let param1 = VParam(x) in
+	let final_retour = (run_skel_pow2 final_kern (param1 :: []) device) in
 	(match final_retour with
 	  VRetour(z) -> Spoc.Mem.get z 0
 	| _ -> assert false)      
      | _ -> assert false)	  
   | _ -> failwith "malformed Kernel"
+
+     
+
+
 
      

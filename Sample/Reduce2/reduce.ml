@@ -22,12 +22,12 @@ open Skeleton
 (* ;; *)
 
 
-let a = Vector.create Vector.float32 20;;
+let a = Vector.create Vector.float32 500000;;
 
 for i = 0 to Vector.length a - 1 do 
   Spoc.Mem.set a i 1.;
 done;;
 
-let c = reduce2 (kern a b -> a +. b) a;;
+let c = reduce2 (kern a b -> (a +. b)) a;;
 
-Printf.printf "res = %f\n" c;;
+Printf.printf "res = %f\n" c;

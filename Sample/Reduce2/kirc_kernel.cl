@@ -17,60 +17,47 @@ int spoc_xor (int a, int b ) { return (a^b);}
 
 /************* FUNCTION PROTOTYPES ******************/
 /************* FUNCTION DEFINITIONS ******************/
-__kernel void spoc_dummy ( __global float* a, int n_i, __global float* b ) {
+__kernel void spoc_dummy ( __global float* a, int n, __global float* b ) {
   __local float spoc_var0[8192];
-  int idx;
+  int start;
   int idl;
-  int n;
-  float n2;
-  float n3;
-  int pos;
-  idx = get_global_id(0); 
+  int stride; 
+  start = 2 * get_group_id(0) * get_local_size(0); 
+  stride = get_local_size(0); 
   idl = get_local_id(0); 
-  spoc_var0[idl] = a[idx]; 
-  barrier(CLK_GLOBAL_MEM_FENCE); 
-  n = 8192; 
-  n2 = n; 
-  n3 = n; 
-  pos = 0; 
-  while (n3 > 0){
-    n3 = floor (n2 / 2) ; 
-    if ((int)n2 % 2 == 0){
-      n2 = n3;
-    }
-    else{
-      n2 = n3 + 1;
-    }
-    ; 
-    if (idl < n2){
-      if (((n2 < n3 || n2 > n3) && idl > 0)){
-        pos = idl + n3; 
-        spoc_var0[idl] = spoc_var0[idl] + spoc_var0[pos];;
-      }
-      else{
-        if (n2 == n3){
-          pos = idl + n2; 
-          spoc_var0[idl] = spoc_var0[idl] + spoc_var0[pos];
-        }        ;
-      }
+  if (start + idl < n){
+    spoc_var0[idl] = a[idl + start]; 
+    ;
+  }
+  else{
+    spoc_var0[idl] = 0; 
+    ;
+  }
+  ; 
+  if (start + idl + get_local_size(0) < n){
+    spoc_var0[idl + get_local_size(0)] = a[start + idl + get_local_size(0)]; 
+    ;
+  }
+  else{
+    spoc_var0[idl + get_local_size(0)] = 0; 
+    ;
+  }
+  ; 
+  while (stride > 0){
+    barrier(CLK_GLOBAL_MEM_FENCE); 
+    if (idl < stride){
+      spoc_var0[idl] = spoc_var0[idl] + spoc_var0[idl + stride];; 
       
-    }    ;}
-  
-  
-  
+    }    ; 
+    stride = stride >> 1;}; 
+  if (idl == 0){
+    b[get_group_id(0)] = spoc_var0[0]; 
+    
+  }  ; 
   
   
   
   ;
-  barrier(CLK_GLOBAL_MEM_FENCE); 
-  if (idx == 0){
-    b[0] = spoc_var0[0]; 
-    
-  }  ; 
-  if ((idl == 0 && idx > 0)){
-    b[0] = b[0] + spoc_var0[0];; 
-    
-  }  ; 
   
   
 }
