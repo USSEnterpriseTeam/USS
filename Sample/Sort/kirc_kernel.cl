@@ -27,10 +27,10 @@ __kernel void spoc_dummy ( __global float* a, int j, int k, int n ) {
     ixj = id_x^j; 
     if ((ixj >= id_x && ixj < n)){
       if (a[id_x] > a[ixj]){
-        test = 0.f;
+        test = 1.f;
       }
       else{
-        test = 1.f;
+        test = 0.f;
       }
       ; 
       if (((id_x&k) == (0) && test)){
