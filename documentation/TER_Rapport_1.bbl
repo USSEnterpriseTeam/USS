@@ -1,0 +1,20 @@
+\begin{thebibliography}{1}
+
+\bibitem{refProgGPGPU}
+{\em Introduction à la programmation GPGPU avec Cuda, Mathias Bourgoin,
+  Sylvain Jubertie.}
+
+\bibitem{refSpoc}
+{\em Page d'accueil du projet SPOC}.
+\newblock http://mathiasbourgoin.github.io/SPOC/.
+
+\bibitem{refSkeleton}
+{\em Skeleton Programming for Heterogeneous GPU-based Systems}.
+\newblock http://homepages.inf.ed.ac.uk/msteuwer/papers/hips2011.pdf.
+
+\bibitem{refMap}
+{\em The map operation}.
+\newblock
+  https://en.wikipedia.org/wiki/General-purpose\_computing\_on\_graphics\_processing\_units.
+
+\end{thebibliography}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.3.14)  14 MAR 2016 13:31
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.3.14)  20 MAY 2016 18:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -304,6 +304,7 @@ File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
 File: listings.cfg 2015/06/04 1.6 listings configuration
 ))
 Package: listings 2015/06/04 1.6 (Carsten Heinz)
+LaTeX Info: Redefining \textsubscript on input line 9.
 
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2015/06/04 1.6 listings language file
@@ -317,18 +318,18 @@ File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
 (./TER_Rapport_1.aux)
 \openout1 = `TER_Rapport_1.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 16.
-LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -393,182 +394,599 @@ e
 ))
 \c@lstlisting=\count103
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 17.
+(Font)              <12> on input line 25.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 17.
+(Font)              <8> on input line 25.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 17.
+(Font)              <6> on input line 25.
 
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 Chapter 1.
 
-Underfull \hbox (badness 10000) in paragraph at lines 22--23
+Underfull \hbox (badness 10000) in paragraph at lines 31--32
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 24--25
+Underfull \hbox (badness 10000) in paragraph at lines 31--32
 
  []
 
+<images_finales/image1.png, id=8, 356.33125pt x 336.25626pt>
+File: images_finales/image1.png Graphic file (type png)
 
-Underfull \hbox (badness 10000) in paragraph at lines 26--28
+<use images_finales/image1.png>
+Package pdftex.def Info: images_finales/image1.png used on input line 35.
+(pdftex.def)             Requested size: 158.95566pt x 150.0pt.
 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 32--33
+Underfull \hbox (badness 10000) in paragraph at lines 41--42
 
  []
 
 [1
 
-]
-Overfull \hbox (3.58044pt too wide) in paragraph at lines 34--35
+ <./images_finales/image1.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 43--44
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 45--46
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 47--48
+
+ []
+
+<images_finales/image2.png, id=18, 401.5pt x 301.125pt>
+File: images_finales/image2.png Graphic file (type png)
+
+<use images_finales/image2.png>
+Package pdftex.def Info: images_finales/image2.png used on input line 51.
+(pdftex.def)             Requested size: 200.00821pt x 150.0pt.
+ [2 <./images_finales/image2.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 60--61
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 69--70
+
+ []
+
+
+Overfull \hbox (3.58044pt too wide) in paragraph at lines 71--72
 \T1/cmr/m/n/10 d'abstraire égale-ment les trans-ferts de don-nées en-tre le CPU
  et la carte graphique. 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 34--35
+Underfull \hbox (badness 10000) in paragraph at lines 71--72
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 36--37
+Underfull \hbox (badness 10000) in paragraph at lines 73--74
 
  []
 
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 41.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 78.
 (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 41.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 78.
 
-Underfull \hbox (badness 10000) in paragraph at lines 50--51
+Underfull \hbox (badness 10000) in paragraph at lines 86--87
+
+ []
+
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 88--89
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 52--53
+Underfull \hbox (badness 10000) in paragraph at lines 90--91
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 54--55
+Overfull \hbox (1.19937pt too wide) in paragraph at lines 99--100
+[]\T1/cmr/m/n/10 Rechercher dans la lit-téra-ture les types de squelettes in-té
+res-sants à dévelop-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 106--108
 
  []
 
-[2] [3]
+
+Underfull \hbox (badness 10000) in paragraph at lines 109--110
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--112
+
+ []
+
+[4] [5]
 Chapter 2.
 
-Underfull \hbox (badness 10000) in paragraph at lines 83--84
+Overfull \hbox (0.91666pt too wide) in paragraph at lines 118--118
+[]\T1/cmr/bx/n/12 Bibliothèques de pro-gram-ma-tion GPGPU ex-is-tantes 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 123--124
 
  []
 
-<image2.png, id=23, 401.5pt x 301.125pt>
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.89 \includegraphics[height=150]{image2.png}
-                                             
-? 
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.89 \includegraphics[height=150]{image2.png}
-                                             
-? 
-File: image2.png Graphic file (type png)
-<use image2.png>
-Package pdftex.def Info: image2.png used on input line 89.
-(pdftex.def)             Requested size: 200.00821pt x 150.0pt.
 
-! Misplaced alignment tab character &.
-<argument> ... GPGPU avec Cuda, Mathias Bourgoin &
-                                                   Sylvain Jubertie.
-l.91 ...uda, Mathias Bourgoin & Sylvain Jubertie.}
-                                                  
-? 
-! Misplaced alignment tab character &.
-<argument> ... GPGPU avec Cuda, Mathias Bourgoin &
-                                                   Sylvain Jubertie.
-l.91 ...uda, Mathias Bourgoin & Sylvain Jubertie.}
-                                                  
-? 
-
-! LaTeX Error: There's no line here to end.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.93 \end{figure} \newline
-                          
-? 
-[4
-
- <./image2.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 98--99
+Underfull \hbox (badness 10000) in paragraph at lines 125--126
 
  []
 
-[5]
-Chapter 3.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 114.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 114.
+
+Underfull \hbox (badness 10000) in paragraph at lines 127--129
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 130--131
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 132--133
+
+ []
+
+
+Overfull \hbox (2.96948pt too wide) in paragraph at lines 136--137
+\T1/cmr/m/n/10 Le fonc-tion-nement de l'API Cuda nous per-met de mieux com-pren
+-dre les principes
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 136--137
+
+ []
+
 [6
 
-] (./TER_Rapport_1.bbl [7]
-! Misplaced alignment tab character &.
-l.4 ...mmation GPGPU avec Cuda, Mathias Bourgoin &
-                                                  
-? 
+] <images_finales/image_cuda.png, id=39, 496.85625pt x 235.88126pt>
+File: images_finales/image_cuda.png Graphic file (type png)
 
+<use images_finales/image_cuda.png>
+Package pdftex.def Info: images_finales/image_cuda.png used on input line 140.
+(pdftex.def)             Requested size: 315.96268pt x 150.0pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 146--147
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 148--150
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 151--152
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 155--156
+
+ []
+
+[7 <./images_finales/image_cuda.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 157--158
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 159--160
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 163--165
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 168--169
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 170--172
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 173--174
+
+ []
+
+
+Overfull \hbox (6.6919pt too wide) in paragraph at lines 175--176
+\T1/cmr/m/n/10 com-pilés dans le lan-gage cible (le C), pour Cuda ou OpenCL, su
+iv-ant l'architecture
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 175--176
+
+ []
+
+[8] [9]
+Underfull \hbox (badness 10000) in paragraph at lines 215--216
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 217--218
+
+ []
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 220.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 220.
+<images_finales/sort.png, id=49, 487.8225pt x 216.81pt>
+File: images_finales/sort.png Graphic file (type png)
+
+<use images_finales/sort.png>
+Package pdftex.def Info: images_finales/sort.png used on input line 227.
+(pdftex.def)             Requested size: 337.51344pt x 150.0pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 233--234
+
+ []
+
+[10 <./images_finales/sort.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 235--236
+
+ []
+
+<images_finales/fonctionnement_skel.png, id=55, 1021.8175pt x 688.5725pt>
+File: images_finales/fonctionnement_skel.png Graphic file (type png)
+
+<use images_finales/fonctionnement_skel.png>
+Package pdftex.def Info: images_finales/fonctionnement_skel.png used on input l
+ine 239.
+(pdftex.def)             Requested size: 222.58653pt x 150.0pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 245--246
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 248--250
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 251--253
+
+ []
+
+[11 <./images_finales/fonctionnement_skel.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 254--256
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 257--259
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 261--262
+
+ []
+
+<images_finales/skel_sort.png, id=60, 1137.24875pt x 630.355pt>
+File: images_finales/skel_sort.png Graphic file (type png)
+
+<use images_finales/skel_sort.png>
+Package pdftex.def Info: images_finales/skel_sort.png used on input line 265.
+(pdftex.def)             Requested size: 270.61998pt x 150.0pt.
+ [12 <./images_finales/skel_sort.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 272--273
+
+ []
+
+<images_finales/kernel_sort.png, id=66, 735.74875pt x 506.89375pt>
+File: images_finales/kernel_sort.png Graphic file (type png)
+
+<use images_finales/kernel_sort.png>
+Package pdftex.def Info: images_finales/kernel_sort.png used on input line 276.
+
+(pdftex.def)             Requested size: 217.71759pt x 150.0pt.
+ [13 <./images_finales/kernel_sort.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 292--293
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 303--304
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 305--306
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 307--308
+
+ []
+
+<images_finales/schema_reduce.png, id=71, 704.6325pt x 195.73125pt>
+File: images_finales/schema_reduce.png Graphic file (type png)
+
+<use images_finales/schema_reduce.png>
+Package pdftex.def Info: images_finales/schema_reduce.png used on input line 31
+2.
+(pdftex.def)             Requested size: 250.0pt x 69.44475pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 318--319
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 320--321
+
+ []
+
+[14 <./images_finales/schema_reduce.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 322--323
+
+ []
+
+<images_finales/reduce.png, id=75, 576.1525pt x 378.41376pt>
+File: images_finales/reduce.png Graphic file (type png)
+
+<use images_finales/reduce.png>
+Package pdftex.def Info: images_finales/reduce.png used on input line 326.
+(pdftex.def)             Requested size: 197.92885pt x 130.0pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 333--334
+
+ []
+
+<images_finales/Stencil_kernel.png, id=76, 702.625pt x 502.87875pt>
+File: images_finales/Stencil_kernel.png Graphic file (type png)
+
+<use images_finales/Stencil_kernel.png>
+Package pdftex.def Info: images_finales/Stencil_kernel.png used on input line 3
+37.
+(pdftex.def)             Requested size: 181.6275pt x 130.0pt.
+ [15 <./images_finales/reduce.png> <./images_finales/Stencil_kernel.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 344--345
+
+ []
+
+<images_finales/schema_stencil.png, id=81, 590.205pt x 358.33875pt>
+File: images_finales/schema_stencil.png Graphic file (type png)
+
+<use images_finales/schema_stencil.png>
+Package pdftex.def Info: images_finales/schema_stencil.png used on input line 3
+48.
+(pdftex.def)             Requested size: 247.06488pt x 150.0pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 356--357
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 367--368
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 369--370
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--372
+
+ []
+
+[16 <./images_finales/schema_stencil.png>]
+<images_finales/kernel_sort_clean.png, id=86, 643.40375pt x 438.63875pt>
+File: images_finales/kernel_sort_clean.png Graphic file (type png)
+
+<use images_finales/kernel_sort_clean.png>
+Package pdftex.def Info: images_finales/kernel_sort_clean.png used on input lin
+e 375.
+(pdftex.def)             Requested size: 220.02084pt x 150.0pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 383--384
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 385--386
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 392--393
+
+ []
+
+
+Overfull \hbox (18.64221pt too wide) in paragraph at lines 394--409
+ [] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 411--412
+
+ []
+
+[17 <./images_finales/kernel_sort_clean.png>]
+Overfull \hbox (14.24927pt too wide) in paragraph at lines 413--414
+[]\T1/cmr/m/n/10 On con-state qu'à mesure que la taille du tableau en en-trée a
+ug-mente, l'utilisation
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 413--414
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 415--416
+
+ []
+
+<images_finales/benchmark.png, id=91, 628.3475pt x 400.49625pt>
+File: images_finales/benchmark.png Graphic file (type png)
+
+<use images_finales/benchmark.png>
+Package pdftex.def Info: images_finales/benchmark.png used on input line 420.
+(pdftex.def)             Requested size: 156.88513pt x 100.0pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 427--428
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 429--430
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 431--432
+
+ []
+
+[18 <./images_finales/benchmark.png>]
+Chapter 3.
+
+Underfull \hbox (badness 10000) in paragraph at lines 436--437
+
+ []
+
+
+Overfull \hbox (1.19937pt too wide) in paragraph at lines 439--440
+[]\T1/cmr/m/n/10 Rechercher dans la lit-téra-ture les types de squelettes in-té
+res-sants à dévelop-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 445--446
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 447--448
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 449--450
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 451--452
+
+ []
+
+[19
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 453--454
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 455--456
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 458--459
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--461
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 462--463
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 465--466
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 467--468
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 469--470
+
+ []
+
+(./TER_Rapport_1.bbl [20]
 Underfull \hbox (badness 10000) in paragraph at lines 12--14
 []\T1/cmr/m/it/10 Skeleton Pro-gram-ming for Het-ero-ge-neous GPU-based Sys-tem
 s\T1/cmr/m/n/10 .
  []
 
-! You can't use `macro parameter character #' in horizontal mode.
-l.18 ...omputing\_on\_graphics\_processing\_units#
-                                                  Map.
-? 
 
 Underfull \hbox (badness 10000) in paragraph at lines 16--19
 []\T1/cmr/m/it/10 The map op-er-a-tion\T1/cmr/m/n/10 .  https://en.wikipedia.or
 g/wiki/General-
  []
 
-) [8
+) [21
 
 ] (./TER_Rapport_1.aux) ) 
 Here is how much of TeX's memory you used:
- 3740 strings out of 495000
- 48903 string characters out of 6181169
- 125020 words of memory out of 5000000
- 6928 multiletter control sequences out of 15000+600000
- 15548 words of font info for 35 fonts, out of 8000000 for 9000
+ 3827 strings out of 495000
+ 51012 string characters out of 6181169
+ 119020 words of memory out of 5000000
+ 7001 multiletter control sequences out of 15000+600000
+ 16316 words of font info for 36 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 38i,6n,49p,558b,1086s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,6n,49p,579b,1084s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/e
-cti1000.600pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000.600
-pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> </home/
-emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> </home/emile/.texm
+crm0700.600pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600
+pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000.600pk> </home/
+emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> </home/emile/.texm
 f-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> </home/emile/.texmf-var/fonts
-/pk/ljfour/jknappen/ec/ecbx2488.600pk> </home/emile/.texmf-var/fonts/pk/ljfour/
-jknappen/ec/ecbx2074.600pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec
-/ecrm1200.600pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1728.6
-00pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on TER_Rapport_1.pdf (9 pages, 133788 bytes).
+/pk/ljfour/jknappen/ec/ecrm1000.600pk> </home/emile/.texmf-var/fonts/pk/ljfour/
+jknappen/ec/ecbx2488.600pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec
+/ecbx2074.600pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.6
+00pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1728.600pk></usr/
+share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on TER_Rapport_1.pdf (22 pages, 785007 bytes).
 PDF statistics:
- 325 PDF objects out of 1000 (max. 8388607)
- 62 compressed objects within 1 object stream
+ 468 PDF objects out of 1000 (max. 8388607)
+ 94 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 66 words of extra memory for PDF output out of 10000 (max. 10000000)
 
