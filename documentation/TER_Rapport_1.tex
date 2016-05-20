@@ -4,6 +4,7 @@
 \usepackage[T1]{fontenc}    
 \usepackage{graphicx}
 \usepackage{listings}
+\usepackage{subscript}
 
 \lstset{
   language=Caml
@@ -88,6 +89,7 @@ Les objectifs de ce projet peuvent se résumer en quatre principaux points :
 \item Rechercher dans la littérature les types de squelettes intéressants à développer  pour des architectures hétérogènes.
 \item Implémenter la bibliothèque de squelettes pour le langage OCaml avec SPOC.
 \item Evaluer les performances obtenues sur des exemples en les comparant à une exécution séquentielle ainsi qu'à d'autres outils semblables issues de la littérature. 
+\end{itemize}
 
 \subsection{Organisation}
 Nous avons tout d'abord fait des recherches sur les squelettes existant et réfléchit à la manière d'en intégrer à SPOC.\newline
@@ -299,13 +301,123 @@ Le code en OpenCL est le suivant :
 
 \begin{figure}[!h]
 \begin{center}
-\includegraphics[height=150]{Stencil_kernel.png}
+\includegraphics[height=150]{images_finales/Stencil_kernel.png}
 \end{center}
-\caption{10. Code OpenCL d'un kernel de Stencil}
+\caption{10. Code OpenCL d'un kernel de Stencil. \textit{En violet, nombre de thread+rayon*2 (emplacement statique à la génération), en jaune, la fonction utilisateur}
 \label{test}
 \end{figure} \newline
 
+Le kernel de la figure 10 a été générée par un squelette de \textit{Stencil} auquel on a appliqué une règle d'addition et un rayon de 2. Pour chaque case \textit{i} de ce tableau, le kernel généré additionne les 2 cases qui précédent \textit{i}, et les 2 cases qui suivent \textit{i} (car le rayon est égale à 2), ainsi que la valeur initiale de la case :
 
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[height=150]{schema_stencil.png}
+\end{center}
+\caption{11. Schéma d'une étape de l'application de l'algorithme du Stencil}
+\label{test}
+\end{figure} \newline
+
+\subsubsection{Bitonic Sort}
+Le tri bitonique est un tri qui est bien applicable à la parallélisation. Cet algorithme est basé sur une fonction appelé fusionneur. Un fusionneur à N entrées a pour propriété que si les entrées (a\textsubscript{0}, ..., a\textsubscript{N/2}) et (a\textsubscript{N/2+1}, ..., a\textsubscript{N}) sont triées alors la sortie (b\textsubscript{0}, ..., b\textsubscript{N}) est trié.\newline
+
+Le fusionneur est la partie de l'algorithme qui peut être parallélisée et est donc exécuté par une kernel.\newline
+
+Ce kernel est appelé log\textsubscript{2}(N) fois par le CPU, avec N la taille du tableau d'entrée, afin que tout le tableau soit trié. Un inconvénient de cet algorithme est qu'il est obligatoire que l'entrée soit d'une taille en puissance de 2. 
+
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[height=150]{images_finales/schema_stencil.png}
+\end{center}
+\caption{12. Fusionneur utilisé comme kernel}
+\label{test}
+\end{figure} \newline
+
+\subsubsection{Generate}
+L'algorithme de \textit{Generate} est un algorithme très simple qui remplis un tableau à partir d'un pattern.
+
+\begin{verbatimtab} 
+Entrée : une taille N
+Sortie : un tableau S
+Pour i Allant de 0 à N
+    S[i] = f(i)
+\end{verbatimtab}
+
+\subsection{Rapports de performance}
+Nous avons réalisé des rapports de performances pour justifier l'efficacité de nos algorithmes parallèles.\newline
+Exécution sur :
+\begin{itemize}
+\item Mémoire vive 1.9 Go
+\item Intel Celeron CPU N3050 1.6Ghz * 2
+\item Intel HD Graphics (CherryView)
+\end{itemize}
+
+Voici un premier benchmark de notre tri-bitonique en OpenCL sur un processeur graphique intégré :
+\begin{center}
+  \begin{tabular}{|*{3}{c|}}
+    \hline
+    Taille du tableau d'entrée &  Exécution séquentielle (s) & Excécution parallèle (s) \\
+    \hline
+    4096 &  0.00872 & 0.007129 \\
+    \hline
+    8192 & 0.0176 & 0.0145 \\
+    \hline
+    262144 & 0.433 & 0.199 \\
+    \hline
+    8288608 & 15.052 & 9.888 \\
+    \hline
+    16777216 & 29.872 & 19.299 \\
+    \hline
+  \end{tabular}
+\end{center}
+
+Sur carte graphique Nvidia (GT 720) et processeur i5 (4*1.6 Ghz), on arrive à un gain supérieur sur un tableau à 16777216 entrées de 2 secondes en parallèle contre 9 secondes en séquentiel.\newline
+
+On constate qu'à mesure que la taille du tableau en entrée augmente, l'utilisation de nos algorithmes se distingue d'une utilisation séquentielle.\newline
+
+Cependant, pour des valeurs plus petites (4096 et 8192), la parallélisation est plus lente puisqu'il faut rajouter une temps constant de 0.2 secondes pour la génération du kernel. Mais, à mesure que la taille du tableau augmente, nous pouvons considérer que le temps de génération du kernel est négligeable.\newline
+
+Nous avons ensuite effectué un benchmask d'un generate suivie d'un map.\newline
+
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[height=150]{benchmark.png}
+\end{center}
+\caption{Figure 13}
+\label{test}
+\end{figure} \newline
+
+On constate encore une fois que pour des tableaux de petite taille, une exécution parallèle est plus lente, du fait que la génération du kernel prend un temps constant et est donc handicapant pour ces cas.\newline
+Cependant, l'exécution de ce kernel en parallèle devient beaucoup plus efficace qu'une exécution séquentielle au fur et à mesure qu'on augmente la taille du tableau en entrée. Ce qui permet d'être beaucoup plus performant sur des tableaux de grande taille.\newline
+On peut aussi noter que si le kernel généré pouvait être sauvegardé plutôt que d'être généré à chaque exécution, on pourrait même rivaliser avec une exécution séquentielle sur des tableaux de petite taille.\newline
+
+\chapter{Conclusion}
+\section{Rappel du travail demandé}
+Le projet a donc consisté à :
+\begin{itemize}
+\item Comprendre et prendre en main la bibliothèque SPOC et Sarek.
+\item Rechercher dans la littérature les types de squelettes intéressants à développer  pour des architectures hétérogènes.
+\item Implémenter la bibliothèque de squelettes pour le langage OCaml avec SPOC.
+\item Evaluer les performances obtenues sur des exemples en les comparant à une exécution séquentielle ainsi qu'à d'autres outils semblables issues de la littérature. 
+\end{itemize}
+
+\section{Travaux effectués}
+Dans un premier temps, nous avons effectué des recherches sur les bibliothèques de squelettes existantes, les principes de la programmation GPGPU et les différentes bibliothèques permettant cette dernière.\newline
+Ensuite, nous avons effectué des modifications au sein de SPOC pour permettre la création de nouveaux squelettes.\newline
+Pour créer des squelettes pour SPOC, nous avons ajouté un module à SPOC, contenant les fonctions permettant l'appel à nos squelettes. Pour cela, nous avons ajouté différents éléments à l'arbre de syntaxe de Sarek, éléments qui sont ensuite remplacés par les fonctions créées par les utilisateurs de SPOC.\newline
+Nos squelettes exécutent du code utilisateur de manière parallèle en générant des kernels compatibles avec SPOC.\newline
+Nous avons effectué des tests de performance sur des calculs parallélisés en les comparant à une exécution séquentielle.\newline
+Une brève documentation utilisateur pour nos squelettes est en cours de rédaction et devrait être bientôt accessible sur le dépôt du projet.\newline
+
+\section{Améliorations possibles}
+Il reste possible d'apporter des améliorations sur le projet SPOC, notamment l'ajout de squelettes supplémentaires (Scan, Pipe, Farm...).\newline
+Une autre amélioration intéressante serait d'implémenter une bibliothèque de génération de squelettes pour pouvoir en ajouter plus facilement. Cette fonctionnalité reste néanmoins dans le domaine du concept et doit être étudiée plus en profondeur pour en véifier la faisabilité.\newline
+Enfin, nos squelettes génèrent des kernels qui sont exécutés en parallèle, mais ces derniers dispairaissent après leur exécution. On pourrait donc imaginer un système de cache qui sauvegarde temporairement les kernels générés afin d'éviter de devoir les regénérer à chaque appel de squalette.\newline
+
+\section{Apports pédagogiques}
+Nous nous sommes familiarisés avec le langage OCaml, un langage que nous n'avions pas étudié jusqu'ici.\newline
+De plus, ce projet nous a permis d'approfondir nos connaissances dans le domaine de la programmation GPGPU, que nous avons étudié au cours de cette année. \newline
+Nous avons aussi beaucoup appris sur le concept de squelette de programmation ainsi que les nombreuses bibliothèque de squelettes existantes. Ces connaissances nous apportent une plus grande vision de ce domaine, ainsi qu'un approche plus ``logicielle'' de la programmation GPU.\newline
+Enfin, nous avons bien sûr découvert l'existence de la bibliothèque que nous avons étudiée en détails, la bibliothèque SPOC.
 
 \bibliographystyle{unsrt}
 \bibliography{biblio}
