@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.3.14)  20 MAY 2016 18:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.3.14)  20 MAY 2016 19:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -481,6 +481,12 @@ File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 78.
 
+Overfull \hbox (3.67099pt too wide) in paragraph at lines 80--81
+\T1/cmr/m/n/10 op-ti-mi-sa-tions sup-plé-men-taires, com-pat-i-bles avec les bi
+b-lio-thèques actuelles,
+ []
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 86--87
 
  []
@@ -805,15 +811,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 371--372
 
  []
 
-[16 <./images_finales/schema_stencil.png>]
-<images_finales/kernel_sort_clean.png, id=86, 643.40375pt x 438.63875pt>
+<images_finales/kernel_sort_clean.png, id=82, 643.40375pt x 438.63875pt>
 File: images_finales/kernel_sort_clean.png Graphic file (type png)
 
 <use images_finales/kernel_sort_clean.png>
 Package pdftex.def Info: images_finales/kernel_sort_clean.png used on input lin
 e 375.
 (pdftex.def)             Requested size: 220.02084pt x 150.0pt.
-
+ [16 <./images_finales/schema_stencil.png>]
 Underfull \hbox (badness 10000) in paragraph at lines 383--384
 
  []
@@ -858,95 +863,95 @@ Underfull \hbox (badness 10000) in paragraph at lines 415--416
 File: images_finales/benchmark.png Graphic file (type png)
 
 <use images_finales/benchmark.png>
-Package pdftex.def Info: images_finales/benchmark.png used on input line 420.
-(pdftex.def)             Requested size: 156.88513pt x 100.0pt.
+Package pdftex.def Info: images_finales/benchmark.png used on input line 419.
+(pdftex.def)             Requested size: 274.56578pt x 175.0pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 427--428
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 429--430
+Underfull \hbox (badness 10000) in paragraph at lines 426--427
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 431--432
+Underfull \hbox (badness 10000) in paragraph at lines 428--429
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 430--431
 
  []
 
 [18 <./images_finales/benchmark.png>]
 Chapter 3.
 
-Underfull \hbox (badness 10000) in paragraph at lines 436--437
+Underfull \hbox (badness 10000) in paragraph at lines 435--436
 
  []
 
 
-Overfull \hbox (1.19937pt too wide) in paragraph at lines 439--440
+Overfull \hbox (1.19937pt too wide) in paragraph at lines 438--439
 []\T1/cmr/m/n/10 Rechercher dans la lit-téra-ture les types de squelettes in-té
 res-sants à dévelop-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 445--446
+Underfull \hbox (badness 10000) in paragraph at lines 444--445
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 447--448
+Underfull \hbox (badness 10000) in paragraph at lines 446--447
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 449--450
+Underfull \hbox (badness 10000) in paragraph at lines 448--449
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 451--452
+Underfull \hbox (badness 10000) in paragraph at lines 450--451
 
  []
 
 [19
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 453--454
+Underfull \hbox (badness 10000) in paragraph at lines 452--453
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 455--456
+Underfull \hbox (badness 10000) in paragraph at lines 454--455
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 458--459
+Underfull \hbox (badness 10000) in paragraph at lines 457--458
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 460--461
+Underfull \hbox (badness 10000) in paragraph at lines 459--460
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 462--463
+Underfull \hbox (badness 10000) in paragraph at lines 461--462
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--466
+Underfull \hbox (badness 10000) in paragraph at lines 464--465
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 467--468
+Underfull \hbox (badness 10000) in paragraph at lines 466--467
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 469--470
+Underfull \hbox (badness 10000) in paragraph at lines 468--469
 
  []
 
@@ -972,7 +977,7 @@ Here is how much of TeX's memory you used:
  7001 multiletter control sequences out of 15000+600000
  16316 words of font info for 36 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 38i,6n,49p,579b,1084s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,6n,49p,580b,1084s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/e
 crm0700.600pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600
 pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000.600pk> </home/
@@ -983,9 +988,9 @@ jknappen/ec/ecbx2488.600pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec
 /ecbx2074.600pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.6
 00pk> </home/emile/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1728.600pk></usr/
 share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on TER_Rapport_1.pdf (22 pages, 785007 bytes).
+Output written on TER_Rapport_1.pdf (22 pages, 789296 bytes).
 PDF statistics:
- 468 PDF objects out of 1000 (max. 8388607)
+ 481 PDF objects out of 1000 (max. 8388607)
  94 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  66 words of extra memory for PDF output out of 10000 (max. 10000000)

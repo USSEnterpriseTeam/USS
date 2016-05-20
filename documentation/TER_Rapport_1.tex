@@ -17,7 +17,7 @@
   language=Caml
 }
 
-\title{TER - Rendu 1}
+\title{TER - Rendu Final \\ Génération de squelettes pour la programmation GPGPU}
 \author{Valentin Bouziat, Emile Cadorel, Jimmy Furet, Guillaume Gas}
 \date{20 mai 2016}
 
@@ -34,13 +34,13 @@ La programmation GPGPU\cite{refProgGPGPU} (General Purpose on Graphic Processing
 \begin{center}
 \includegraphics[height=150pt]{images_finales/image1.png}
 \end{center}
-\caption{Figure 1. Représentation simplifiée d'un ordinateur classique}
+\caption{Représentation simplifiée d'un ordinateur classique}
 \label{test1}
 \end{figure}
 
-En effet le processeur graphique possède une capacité de calcul beaucoup plus grande que celle d’un processeur classique. Pour peu qu’il existe un algorithme parallèle pour un problème donné. La programmation GPGPU n’est applicable qu’avec utilisation des pilotes et des bibliothèques associées. Ces pilotes et bibliothèques généralement proposés par les constructeurs de processeur (ex: Intel, Nvidia, …) permettent la programmation sur la carte graphique pour des informaticiens chevronnés.\newline 
+En effet, le processeur graphique possède une capacité de calcul beaucoup plus grande que celle d’un processeur classique, pour peu qu’il existe un algorithme parallèle pour un problème donné. La programmation GPGPU n’est applicable qu’avec utilisation des pilotes et des bibliothèques associés. Ces pilotes et bibliothèques généralement proposés par les constructeurs de processeur (ex: Intel, Nvidia, …) permettent la programmation sur la carte graphique pour des informaticiens chevronnés.\newline 
 
-La programmation GPGPU optimise donc la puissance de calcul grâce à la parallélisation. Généralement, un algorithme exécuté en parallèle (en utilisant le processeur graphique ou plusieurs coeurs d'un processeur) terminera plus rapidement qu'un algorithme executé de manière séquentielle (sans se soucier de la parallélisation).  \newline
+La programmation GPGPU optimise donc la puissance de calcul grâce à la parallélisation. Généralement, un algorithme exécuté en parallèle (en utilisant le processeur graphique ou plusieurs coeurs d'un processeur) terminera plus rapidement qu'un algorithme exécuté de manière séquentielle (sans se soucier de la parallélisation).  \newline
 
 Le GPU possède une architecture SIMD (Single Instruction Multiple Data), proposant de nombreuses unités de calcul. \newline
 
@@ -50,7 +50,7 @@ Le GPU est découpé en plusieurs TCP (Texture Processing Cluster), eux-même d�
 \begin{center}
 \includegraphics[height=150pt]{images_finales/image2.png}
 \end{center}
-\caption{Figure 2. Représentation d'une architecture GPU - ref : Introduction à la programmation GPGPU avec Cuda, Mathias Bourgoin, Sylvain Jubertie}
+\caption{Représentation d'une architecture GPU - ref : Introduction à la programmation GPGPU avec Cuda, Mathias Bourgoin, Sylvain Jubertie}
 \label{test2}
 \end{figure}
 
@@ -59,7 +59,7 @@ L'architecture d'un GPU étant SIMD, il n'est pas conseillé de créer des progr
 \section{Le langage OCaml}
 Langage développé par l'INRIA (Institut National de Recherche Informatique et Automatique) anciennement connu sous le nom d'Objective Caml.\newline
 
-OCaml est un langage multi-paradigme, c'est à dire qu'il permet l'utilisation de plusieurs paradigme de programmation tels que la programmation orientée objet ou encore la programmation statique. 
+OCaml est un langage multi-paradigme, c'est à dire qu'il permet l'utilisation de plusieurs paradigmes de programmation tels que la programmation orientée objet ou encore la programmation statique. 
 
 OCaml est un langage sûr, notamment grâce au typage fort et à sa gestion automatique de la mémoire. 
 
@@ -75,17 +75,17 @@ Enfin, elle permet aussi d’utiliser le typage statique afin de vérifier les n
 Il existe deux solutions afin d’exprimer les noyaux :
 \begin{itemize}
   
-\item Sarek : un langage proche de OCaml. Sarek est compatible avec les bibliothèques existantes, ses performances sont facilement prévisibles et optimisables.
+\item Sarek est un langage proche de OCaml, il est compatible avec les bibliothèques existantes, et ses performances sont facilement prévisibles et optimisables.
   
-\item L’interopérabilité avec les noyaux Cuda/OpenCL : permet de réaliser des optimisations supplémentaires, compatible avec les bibliothèques actuelles, mais moins robuste que Sarek.
+\item L’interopérabilité avec les noyaux Cuda/OpenCL : permet de réaliser des optimisations supplémentaires, compatibles avec les bibliothèques actuelles, mais moins robuste que Sarek.
 
 \end{itemize}
   
 \section{Les Squelettes de programmation}
 
-Les squelettes de programmation\cite{refSkeleton} sont une forme de programmation, ou il existe des éléments générique pré-définis - tel que map, reduce, farm, pipe etc... Ces squelettes peuvent être personnalisés grâce à du code utilisateur.\newline
+Les squelettes de programmation\cite{refSkeleton} sont une forme de programmation, où il existe des éléments génériques pré-définis - tel que map, reduce, scan, stencil, etc... Ces squelettes peuvent être personnalisés grâce à du code utilisateur.\newline
 
-Les squelettes permettent une abstraction de haut niveau et aident les utilisateurs à implémenter des algorithmes complexe comme les algorithmes parallèles. Les algorithmes suivant sont généralement implémenté en tant que squelette dans les bibliothèque de programmation GPGPU.\newline
+Les squelettes permettent une abstraction de haut niveau et aident les utilisateurs à implémenter des algorithmes complexes comme les algorithmes parallèles. Les algorithmes suivant sont généralement implémentés en tant que squelette dans les bibliothèques de programmation GPGPU.\newline
 
 Afin de mieux comprendre le but de notre travail, nous avons fait des recherches sur la programmation de tels squelettes sur internet. Nous avons ainsi pris exemple sur deux bibliothèques qui semblent reprendre les concepts nous intéressent : Thrust, développée par Nvidia, et SkePU.\newline
 
@@ -106,14 +106,14 @@ Les objectifs de ce projet peuvent se résumer en quatre principaux points :
 Nous avons tout d'abord fait des recherches sur les squelettes existant et réfléchit à la manière d'en intégrer à SPOC.\newline
 Nous nous sommes alors partagé les tâches, certains travaillant sur la création de fonctions nécessaires à la création de squalettes, d'autres réalisant les squelettes.\newline
 
-Afin de discuter de l'avancement du projet, nous avons régulièrement organisé des réunions, en personne ou par visio-conférences) avec notre tuteur et avons également dialogué par mail.\newline
+Afin de discuter de l'avancement du projet, nous avons régulièrement organisé des réunions, (en personne ou par visio-conférences) avec notre tuteur et avons également dialogué par mail.\newline
 
 Cela nous a permis de tenir notre tuteur au courant de notre avancement et de poser régulièrement des questions sur le fonctionnement de SPOC ou encore sur le langage OCaml en lui même.\newline
 
 Nous avons également utilisé un dépôt pour y ajouter régulièrement notre code et afin de profiter de la force du logiciel de versionnage git.\newline
 Lien du dépôt : https://github.com/USSEnterpriseTeam/USS
 
-\chapter{Travaux effectués}
+\chapter{Travail effectué}
 \section{Analyse de l'existant}
 \subsection{Bibliothèques de programmation GPGPU existantes}
 
@@ -129,7 +129,7 @@ Ces trois langages peuvent êtres utilisés simultanément pour l'expression des
 
 Cuda propose donc un accès standardisé à la puissance de calcul et a été très bien accueillie par la communauté scientifique. De plus, on retrouve l'utilisation de cette API dans plusieurs domaines notamment la recherche pharmaceutique : Cuda est utilisé et accélère Amber, logiciel de simulation moléculaire utilisé par plus de 60 000 chercheurs.\newline
 
-Cuda est également accessible au public depuis Windows 7, les GPU de Nvidia ne sont désormais plus seulement des processeurs graphiques mais peuvent désormais faire office de processeurs de calcul parallèle. \newline
+Cuda est également accessible au public, les GPU de Nvidia ne sont désormais plus seulement des processeurs graphiques mais peuvent désormais faire office de processeurs de calcul parallèle. \newline
 
 \subsection{Fonctionnement de Cuda}
 
@@ -143,9 +143,9 @@ Le fonctionnement de l'API Cuda nous permet de mieux comprendre les principes de
 \label{test3}
 \end{figure}
 
-Une grille est constituée de blocs. Chaque bloc est constitué de threads. Les blocs sont des éléments des calculs dissociables les uns des autres. Ils peuvent être exécutés dans un ordre aléatoire, le plus parallèle possible à la décision du driver de la machine exécutrice. C'est pourquoi chaque thread ne peut communiquer qu'avec les threads d'un même bloc.\newline
+Une grille est constituée de blocs. Chaque bloc est constitué de threads. Les blocs sont des éléments de calcul dissociables les uns des autres. Ils peuvent être exécutés dans un ordre aléatoire, le plus parallèle possible à la décision du driver de la machine exécutrice. C'est pourquoi chaque thread ne peut communiquer qu'avec les threads d'un même bloc.\newline
 
-Un warp est un ensemble de 32 threads, envoyés ensemble à l'exécution et executés simultanément. Un thread est exécuté par un processeur (un des coeurs de GPU), on peut donc établir une correspondance entre le thread et une unité de calcule séquentielle.\newline
+Un warp est un ensemble de 32 threads, envoyés ensemble à l'exécution et executés simultanément. Un thread est exécuté par un processeur (un des coeurs de GPU), on peut donc établir une correspondance entre le thread et une unité de calcul séquentielle.\newline
 Ainsi, le bloc est le multiprocesseur, tandis que la grille représente l'entièreté de la carte graphique. \newline
 
 Il est possible à l'utilisateur de faire varier le nombre de blocs et de threads utilisés dans le calcul parallèle. Il est donc primordiale lors de la programmation d'un kernel de se soucier du nombre de blocs et de threads à utiliser en fonction de plusieurs paramètres (capacités de la carte graphique, bon compromis entre nombre de blocs et de threads). \newline
@@ -168,7 +168,7 @@ Malgré tout, nous nous sommes vite familiarisé avec le compilateur Sarek, comp
 SPOC permet principalement l'intéropérabilité Cuda/OpenCL :\newline
 
 SPOC détecte, dans un premier temps, les différents processeurs de calcul parallèle accessibles depuis l'hôte.\newline
-Ensuite, les calculs à exécuter en parallèle sont réparties sur les différents processeurs de calcul (en utilisant Cuda pour les GPU Nvidia ou OpenCL pour les autres GPU ou les CPU multi-coeurs). \newline
+Ensuite, les calculs à exécuter en parallèle sont répartis sur les différents processeurs de calcul (en utilisant Cuda pour les GPU Nvidia ou OpenCL pour les autres GPU ou les CPU multi-coeurs). \newline
 
 Pour ce faire, SPOC propose un langage de programmation appelé Sarek. Ce langage permet à un utilisateur ne connaissant ni Cuda, ni OpenCL, de créer ses propres kernels dans un langage proche de OCaml. Ces morceaux de programme sont ensuite analysés à la compilation afin de générer un arbre de syntaxe, et d'effectuer une vérification des types.\newline
 
@@ -180,13 +180,13 @@ Nous avons ainsi pris exemple sur deux bibliothèques qui semblent reprendre les
 
 \subsubsection{Thrust}
 
-Cette bibliothèque de templates C++ pour Cuda est basée sur la STL (Standard Template Library). Elle permet l’utilisation d’algorithmes parallèles avec un minimum de code. Ainsi, on retrouve les algorithmes suivant :
+Cette bibliothèque de templates C++ pour Cuda est basée sur la STL (Standard Template Library). Elle permet l’utilisation d’algorithmes parallèles avec un minimum de code. Ainsi, on retrouve les algorithmes suivants :
 
 \begin{itemize}
-\item Transformations : applique une opération d’un “set” de données et met le résultat dans un “set” de destination. 
-\item Réductions : utilise une opération binaire pour réduire une entrée en une unique valeur. 
-\item Prefix-Sums : ou opération “scan” permet par exemple, sur un tableau en entrée, d’obtenir en sortie un tableau avec les sommes cumulées.
-\item Reordering : permet d’arranger ou partitionner des données selon des prédicats de test.
+\item Transformation : applique une opération d’un “set” de données et met le résultat dans un “set” de destination. 
+\item Réduction : utilise une opération binaire pour réduire une entrée en une unique valeur. 
+\item Prefix-Sum : ou opération “scan” permet par exemple, sur un tableau en entrée, d’obtenir en sortie un tableau avec les sommes cumulées.
+\item Reordering : permet d’arranger ou de partitionner des données selon des prédicats de test.
 \item Sort : tri un ensemble d’élément à l’aide d’une relation d’ordre donné.
 \end{itemize}
 
@@ -212,7 +212,7 @@ Afin d'implémenter nos différents squelettes, nous avons créé un module OCam
 
 \subsection{Génération des kernels}
 
-Comme nous l'avons vu précédemment, SPOC permet de créer des kernels, Cuda ou OpenCL, à partir d'un arbre de syntaxe (AST) à partir du moment où celui-ci est correctement typé. En temps normal, cet AST est le résultat de la compilation de Sarek, dans notre cas la situation était un peu différente. Notre objectif a été de récupérer un arbre de syntaxe généré par l'utilisateur afin de l'implanter dans un kernel et de compiler l'arbre obtenu, pour ce faire il a fallu rajouter des éléments dans l'arbre de syntaxe de Sarek.\newline
+Comme nous l'avons vu précédemment, SPOC permet de créer des kernels, Cuda ou OpenCL, à partir d'un arbre de syntaxe (AST), à partir du moment où celui-ci est correctement typé. En temps normal, cet AST est le résultat de la compilation de Sarek, dans notre cas la situation était un peu différente. Notre objectif a été de récupérer un arbre de syntaxe généré par l'utilisateur afin de l'implanter dans un kernel et de compiler l'arbre obtenu, pour ce faire il a fallu rajouter des éléments dans l'arbre de syntaxe de Sarek.\newline
 
 Le premier élément que nous avons ajouté est le noeud \textit{Skel}, ce noeud est une balise qui est ensuite interprétée comme un appel de fonction \textit{inline}. Il contient une liste de paramètres et un paramètre de retour. \newline
 
@@ -226,11 +226,11 @@ C'est grâce à ce noeud que nos squelettes peuvent être modulaires et permette
 \begin{center}
 \includegraphics[height=150pt]{images_finales/sort.png}
 \end{center}
-\caption{Figure 5. Appel du squelette de tri pour l'utilisateur}
+\caption{Appel du squelette de tri pour l'utilisateur}
 \label{test5}
 \end{figure}
 
-Pour permettre d'exécuter des algorithmes, comme le tri, il a fallu générer des arbres de syntaxe qui contiennent le code voulu avec les noeuds \textit{Skel}. Ces noeuds ne faisant pas partie directement de la grammaire de Sarek, ils ne peuvent pas être analysés par son analyseur syntaxique, il a donc fallu les écrire à la main. \newline
+Pour permettre d'exécuter des algorithmes, comme le tri, il a fallu générer des arbres de syntaxe qui contiennent le code voulu avec les noeuds \textit{Skel}. Ces noeuds ne faisant pas partie directement de la grammaire de Sarek, ils ne peuvent donc pas être analysés par son analyseur syntaxique, il a donc fallu les écrire à la main. \newline
 
 Une fois nos AST de squelettes créés, ils sont envoyés dans une routine qui va les transformer en arbre de syntaxe correctement typé et ne contenant que des noeuds transformables par le générateur de code de Sarek.\newline
 
@@ -238,7 +238,7 @@ Une fois nos AST de squelettes créés, ils sont envoyés dans une routine qui v
 \begin{center}
 \includegraphics[height=150pt]{images_finales/fonctionnement_skel.png}
 \end{center}
-\caption{Figure 6. Représentation graphique de la transformation des squelettes en kernels exécutables}
+\caption{Représentation graphique de la transformation des squelettes en kernels exécutables}
 \label{test6}
 \end{figure}
 
@@ -264,7 +264,7 @@ Nous venons de voir comment l'utilisateur peut appeler un squelette. Le squelett
 \begin{center}
 \includegraphics[height=150pt]{images_finales/skel_sort.png}
 \end{center}
-\caption{Figure 7. Code du squelette du bitonic sort}
+\caption{Code du squelette du bitonic sort}
 \label{test7}
 \end{figure}
 
@@ -275,13 +275,13 @@ Le squelette de l'AST de l'utilisateur est ensuite envoyé dans la routine de tr
 \begin{center}
 \includegraphics[height=150pt]{images_finales/kernel_sort.png}
 \end{center}
-\caption{Figure 8. Kernel généré à partir du squelette du bitonic sort}
+\caption{Kernel généré à partir du squelette du bitonic sort}
 \label{test8}
 \end{figure}
 
 
 \begin{enumerate}
-\item Remplacement du noeud Skel
+\item Remplacement du noeud \textit{Skel}
 \item Remplacement statique en fonction du type de l'utilisateur
 \item Type de l'utilisateur
 \end{enumerate}
@@ -289,7 +289,7 @@ Le squelette de l'AST de l'utilisateur est ensuite envoyé dans la routine de tr
 \subsection{Squelettes implémentés}
 \subsubsection{Map}
 
-Le \textit{Map} est un algorithme classique dans la programmation GPGPU. Il est facilement parallélisable étant donné que son objectif est d'appliquer une opération à chacune des cases d'un tableau.\newline
+Le \textit{Map} est un algorithme classique dans la programmation GPGPU. Il est facilement parallélisable étant donné que son objectif est d'appliquer une opération à chacunes des cases d'un tableau.\newline
 
 \begin{lstlisting} 
 Entree : un tableau T
@@ -300,7 +300,7 @@ Pour Tout i dans T
 
 \subsubsection{Reduce}
 
-L'objectif d'un \textit{Reduce} est de réduire un tableau dans une seule variables afin d'en avoir la somme, le produit...\newline
+L'objectif d'un \textit{Reduce} est de réduire un tableau dans une seule variable afin d'en avoir la somme, le produit...\newline
 
 L'algorithme du \textit{Reduce} utilise la mémoire partagée afin de permettre une optimisation des accès mémoire ainsi qu'une communication entre les threads d'un même bloc.\newline
 
@@ -317,7 +317,7 @@ L'algorithme du \textit{Reduce} fonctionne de la manière suivante : les donnée
 
 Cette opération est répétée jusqu'à avoir le résultat du \textit{reduce} local au bloc dans la première case de la mémoire partagée au bloc.\newline
 
-L'algorithme est appelé deux fois, la première fois le tableau de résultats contient le résultat de chacun des N blocs et fais une taille de N. La deuxième fois, l'algorithme est appelé avec uniquement un seul bloc, de cette façon le résultat du \textit{Reduce} est dans la première case du tableau.\newline
+L'algorithme est appelé deux fois, la première fois le tableau de résultats contient le résultat de chacuns des N blocs et fait une taille de N. La deuxième fois, l'algorithme est appelé avec uniquement un seul bloc, de cette façon le résultat du \textit{Reduce} est dans la première case du tableau.\newline
 
 Vous trouverez ici une version de l'algorithme écrit en C++ avec Cuda et effectuant une somme : \newline
  
@@ -325,7 +325,7 @@ Vous trouverez ici une version de l'algorithme écrit en C++ avec Cuda et effect
 \begin{center}
 \includegraphics[height=130pt]{images_finales/reduce.png}
 \end{center}
-\caption{Figure 10. Kernel Cuda du Reduce}
+\caption{Kernel Cuda du Reduce}
 \label{test10}
 \end{figure}
 
@@ -336,7 +336,7 @@ Les algorithmes \textit{Stencil} sont une catégorie d'algorithme parallèle qui
 \begin{center}
 \includegraphics[height=130pt]{images_finales/Stencil_kernel.png}
 \end{center}
-\caption{Figure 11. Code OpenCL d'un kernel de Stencil. \textit{En violet, nombre de thread+rayon*2 (emplacement statique à la génération), en jaune, la fonction utilisateur}}
+\caption{Code OpenCL d'un kernel de Stencil. \textit{En violet, nombre de thread+rayon*2 (emplacement statique à la génération), en jaune, la fonction utilisateur}}
 \label{test11}
 \end{figure}
 \newpage
@@ -347,13 +347,13 @@ Le kernel de la figure 10 a été générée par un squelette de \textit{Stencil
 \begin{center}
 \includegraphics[height=150pt]{images_finales/schema_stencil.png}
 \end{center}
-\caption{Figure 12. Schéma d'une étape de l'application de l'algorithme du Stencil}
+\caption{Schéma d'une étape de l'application de l'algorithme du Stencil}
 \label{test12}
 \end{figure}
 
 \subsubsection{Generate}
 
-L'algorithme de \textit{Generate} est un algorithme très simple qui remplis un tableau à partir d'un pattern. \newline
+L'algorithme de \textit{Generate} est un algorithme très simple qui remplit un tableau à partir d'un pattern. \newline
 
 \begin{lstlisting} 
 Entree : une taille N
@@ -364,7 +364,7 @@ Pour i Allant de 0 a N
 
 \subsubsection{Bitonic Sort}
 
-Le tri bitonique est un tri qui est bien applicable à la parallélisation. Cet algorithme est basé sur une fonction appelé fusionneur. Un fusionneur à N entrées a pour propriété que si les entrées (a\textsubscript{0}, ..., a\textsubscript{N/2}) et (a\textsubscript{N/2+1}, ..., a\textsubscript{N}) sont triées alors la sortie (b\textsubscript{0}, ..., b\textsubscript{N}) est trié.\newline
+Le tri bitonique est un tri qui est bien applicable à la parallélisation. Cet algorithme est basé sur une fonction appelée fusionneur. Un fusionneur à N entrées a pour propriété que si les entrées (a\textsubscript{0}, ..., a\textsubscript{N/2}) et (a\textsubscript{N/2+1}, ..., a\textsubscript{N}) sont triées alors la sortie (b\textsubscript{0}, ..., b\textsubscript{N}) est triée.\newline
 
 Le fusionneur est la partie de l'algorithme qui peut être parallélisée et est donc exécuté par une kernel.\newline
 
@@ -374,13 +374,13 @@ Ce kernel est appelé log\textsubscript{2}(N) fois par le CPU, avec N la taille 
 \begin{center}
 \includegraphics[height=150pt]{images_finales/kernel_sort_clean.png}
 \end{center}
-\caption{Figure 13. Fusionneur utilisé comme kernel}
+\caption{Fusionneur utilisé comme kernel}
 \label{test13}
 \end{figure}
 
 
 \subsection{Rapports de performance}
-Nous avons réalisé des rapports de performances pour justifier l'efficacité de nos algorithmes parallèles.\newline
+Nous avons réalisé des rapports de performance pour justifier l'efficacité de nos algorithmes parallèles.\newline
 
 Exécution sur : \newline
 \begin{itemize}
@@ -408,18 +408,17 @@ Voici un premier benchmark de notre tri-bitonique en OpenCL sur un processeur gr
   \end{tabular}
 \end{center}
 
-Sur carte graphique Nvidia (GT 720) et processeur i5 (4*1.6 Ghz), on arrive à un gain supérieur sur un tableau à 16777216 entrées de 2 secondes en parallèle contre 9 secondes en séquentiel.\newline
+Sur carte graphique Nvidia (GT 720) et processeur i5 (4*1.6 Ghz), on arrive à un gain supérieur, sur un tableau à 16777216 entrées, de 2 secondes en parallèle contre 9 secondes en séquentiel.\newline
 
 On constate qu'à mesure que la taille du tableau en entrée augmente, l'utilisation de nos algorithmes se distingue d'une utilisation séquentielle.\newline
 
-Cependant, pour des valeurs plus petites (4096 et 8192), la parallélisation est plus lente puisqu'il faut rajouter une temps constant de 0.2 secondes pour la génération du kernel. Mais, à mesure que la taille du tableau augmente, nous pouvons considérer que le temps de génération du kernel est négligeable.\newline
+Cependant, pour des valeurs plus petites (4096 et 8192), la parallélisation est plus lente puisqu'il faut rajouter une temps constant de 0.2 seconde pour la génération du kernel. Mais, à mesure que la taille du tableau augmente, nous pouvons considérer que le temps de génération du kernel est négligeable.\newline
 
-Nous avons ensuite effectué un benchmark d'un generate suivie d'un map.\newline
 \begin{figure}[!h]
 \begin{center}
-\includegraphics[height=100pt]{images_finales/benchmark.png}
+\includegraphics[height=175pt]{images_finales/benchmark.png}
 \end{center}
-\caption{Figure 14.}
+\caption{}
 \label{test14}
 \end{figure}
 
@@ -442,7 +441,7 @@ Le projet a donc consisté à : \newline
 \end{itemize}
 
 \section{Travaux effectués}
-Dans un premier temps, nous avons effectué des recherches sur les bibliothèques de squelettes existantes, les principes de la programmation GPGPU et les différentes bibliothèques permettant cette dernière.\newline
+Dans un premier temps, nous avons effectué des recherches sur les bibliothèques de squelettes existantes, les principes de la programmation GPGPU et les différentes bibliothèques permettant la programmation GPGPU.\newline
 
 Ensuite, nous avons effectué des modifications au sein de SPOC pour permettre la création de nouveaux squelettes.\newline
 
@@ -457,9 +456,9 @@ Une brève documentation utilisateur pour nos squelettes est en cours de rédact
 \section{Améliorations possibles}
 Il reste possible d'apporter des améliorations sur le projet SPOC, notamment l'ajout de squelettes supplémentaires (Scan, Pipe, Farm...).\newline
 
-Une autre amélioration intéressante serait d'implémenter une bibliothèque de génération de squelettes pour pouvoir en ajouter plus facilement. Cette fonctionnalité reste néanmoins dans le domaine du concept et doit être étudiée plus en profondeur pour en véifier la faisabilité.\newline
+Une autre amélioration intéressante serait d'implémenter une bibliothèque de génération de squelettes pour pouvoir en ajouter plus facilement. Cette fonctionnalité reste néanmoins dans le domaine du concept et doit être étudiée plus en profondeur pour en vérifier la faisabilité.\newline
 
-Enfin, nos squelettes génèrent des kernels qui sont exécutés en parallèle, mais ces derniers dispairaissent après leur exécution. On pourrait donc imaginer un système de cache qui sauvegarde temporairement les kernels générés afin d'éviter de devoir les regénérer à chaque appel de squalette.\newline
+Enfin, nos squelettes génèrent des kernels qui sont exécutés en parallèle, mais ces derniers disparaissent après leur exécution. On pourrait donc imaginer un système de cache qui sauvegarde temporairement les kernels générés afin d'éviter de devoir les regénérer à chaque appel de squelette.\newline
 
 \section{Apports pédagogiques}
 Nous nous sommes familiarisés avec le langage OCaml, un langage que nous n'avions pas étudié jusqu'ici.\newline
