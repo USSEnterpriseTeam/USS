@@ -65,6 +65,7 @@ let arg_of_vec v  =
 let get_arg_vec_kind kind =
   match kind with
   | VFloat32 -> (Vector.float32)
+  | VFloat64 -> Obj.magic (Vector.float64)
      
 let arg_of_int i =
   Kernel.Int32 i
@@ -88,12 +89,14 @@ let a_to_vect_name a name =
   match a with
   | IntVar (i, _) -> (new_int_vec_var (i) name)
   | FloatVar (i, _) -> (new_float_vec_var (i) name)
+  | DoubleVar (i, _) -> (new_double_vec_var (i) name)
   | a -> print_ast a; failwith "a_to_vect name"
 
 let a_to_vect_name_int a name i =
   match a with
   | IntVar (_, _) -> (new_int_vec_var (i) name)
   | FloatVar (_, _) -> (new_float_vec_var (i) name)
+  | DoubleVar (i, _) -> (new_double_vec_var (i) name)
   | a -> print_ast a; failwith "a_to_vect name"
     
 (*
@@ -105,6 +108,7 @@ let rec param_name (var: k_ext) =
   | IntVar (i, s) -> s
   | IntId (s, i) -> s
   | FloatVar(i, s) -> s
+  | DoubleVar(i, s) -> s
   | IntVecAcc (a, b) -> param_name a
   | a -> print_ast a; failwith "TODO"   
 
@@ -256,7 +260,10 @@ let fill_skel_node (params: k_ext) (user_params: k_ext) (user_body: k_ext) (ret:
       | Ife (a, b, c) -> Ife (aux a, aux b, aux c)
       | Int a -> Int a
       | Float a -> Float a
-      | IntId (v, i) -> translate_id v trans	 
+      | Double a -> Double a
+      | App (a,b) -> App (aux a, Array.map aux b)
+      | IntId (v, i) -> translate_id v trans
+      | Intrinsics a -> Intrinsics a
       | a -> print_ast a; assert false
       )
     in aux user_body
@@ -422,13 +429,13 @@ let thread_creation (device) (length: int) =
       match device.Devices.specific_info with
       | Devices.CudaInfo cI ->
 	 block.blockX <- min cI.maxThreadsDim.x length;	 
-	 grid.gridX <- length / (block.blockX lsl 1);
-	 if(length mod (block.blockX lsl 1) > 0) then
+	 grid.gridX <- length / (block.blockX);
+	 if(length mod (block.blockX) > 0) then
 	   grid.gridX <- grid.gridX + 1
       | Devices.OpenCLInfo oI ->
 	 block.blockX <- min (*oI.Devices.max_work_item_size.Devices.x*) 4096 length;	 
-	 grid.gridX <- length / (block.blockX lsl 1);	 
-	 if(length mod (block.blockX lsl 1) > 0) then
+	 grid.gridX <- length / (block.blockX);	 
+	 if(length mod (block.blockX) > 0) then
 	   grid.gridX <- grid.gridX + 1
     )
   end;
@@ -446,21 +453,20 @@ let thread_creation_pow2 (device) (length: int) =
 	 let threads = pow_2_sup (length) in
 	 let open Int32 in
 	 block.blockX <- min cI.maxThreadsDim.x threads;	 
-	 grid.gridX <- length / (block.blockX lsl 1);
-	 if(length mod (block.blockX lsl 1) > 0) then
+	 grid.gridX <- length / (block.blockX);
+	 if(length mod (block.blockX) > 0) then
 	   grid.gridX <- grid.gridX + 1
       | Devices.OpenCLInfo oI ->
 	 let threads = pow_2_sup (length) in
 	 let open Int32 in
-	 block.blockX <- min (*oI.Devices.max_work_item_size.Devices.x*) 4096 threads;	 
-	 grid.gridX <- length / (block.blockX lsl 1);	 
-	 if(length mod (block.blockX lsl 1) > 0) then
+	 block.blockX <- min (*oI.Devices.max_work_item_size.Devices.x*) 4096 threads;
+	 grid.gridX <- length / (block.blockX);	 
+	 if(length mod (block.blockX) > 0) then
 	   grid.gridX <- grid.gridX + 1
     )
   end;
   Printf.printf "block : %d, grid : %d\n" block.blockX grid.gridX;
   (block, grid)    
-
 
     
 let load_cuda_args param_infos param device bin =
@@ -998,7 +1004,7 @@ let rec print_list list =
     Printf.printf "\n"
 ;;
 
-let reduce ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=(Spoc.Devices.init ()).(0)) (vec_in : ('c, 'i) Vector.vector) : 'e =
+let reduceTest ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=(Spoc.Devices.init ()).(0)) (vec_in : ('c, 'i) Vector.vector) : 'e =
   let ker2, k = ker in
   let (k1, k2, k3) = (k.ml_kern, k.body, k.ret_val) in
   match k2 with
@@ -1293,7 +1299,7 @@ let reduce2_skel =
   (params, body)
     
     
-let reduce2 ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=(Spoc.Devices.init ()).(0)) (vec_in : ('c, 'i) Vector.vector) : 'e  =
+let reduce ((ker: ('a, 'b, ('c -> 'd -> 'e), 'f, 'g) sarek_kernel)) ?dev:(device=(Spoc.Devices.init ()).(0)) (vec_in : ('c, 'i) Vector.vector) : 'e  =
   let ker2, k = ker in
   let (k1, k2, k3) = (k.ml_kern, k.body, k.ret_val) in
   match k2 with
@@ -1368,27 +1374,17 @@ let bitonic_sort_skel =
   let id_n = IntId ("n", (6)) in
   let id_tmp = IntId ("tmp", (5)) in
   let id_test = IntId ("test", (7)) in
+  
   let skel_args = Skel (Concat (IntVecAcc (id_a, id_x), (Concat (IntVecAcc(id_a, id_ixj), empty_arg()))), id_test) in
-  let body = Local (Local (
-    Decl (new_int_var (3) "id_x"),
-    Local (
-      Decl (new_int_var (4) "ixj"),
-      Local (
-	Decl (IdName ("tmp")),
-	Local (
-	  Decl (BoolVar (7, "test")),
-	  Seq (
-	    Set (id_x, Intrinsics ((cu_thread, cl_thread))),
+  let body = Local (Local ( Decl (new_int_var (3) "id_x"),Local (Decl (new_int_var (4) "ixj"), Local (Decl (IdName ("tmp")),
+	Local (Decl (BoolVar (7, "test")),
+	  Seq (Set (id_x, Intrinsics ((cu_thread, cl_thread))),
 	    If (LtBool (id_x, id_n),
-		Seq (
-		  Set (id_ixj, ExpBit (id_x, id_j)),
+		Seq (Set (id_ixj, ExpBit (id_x, id_j)),
 		  If (And (GtEBool (id_ixj, id_x),
 			   LtBool (id_ixj, id_n)),
-		      Seq (
-			skel_args,
-			Seq (
-			  If(And (EqBool (AndBit(id_x, id_k), Int 0),
-				  id_test),
+		      Seq ( skel_args, Seq (
+			  If(And (EqBool (AndBit(id_x, id_k), Int 0), Not (id_test)),
 			     Seq (
 			       Set (id_tmp, IntVecAcc (id_a, id_x)),
 			       Seq (
@@ -1397,10 +1393,8 @@ let bitonic_sort_skel =
 			       )
 			     )			  
 			  ),
-			  If(And (Not(EqBool( AndBit(id_x, id_k), Int 0)),
-				  Not (id_test)),
-			     Seq (
-			       Set (id_tmp, IntVecAcc (id_a, id_x)),
+			  If(And (Not(EqBool( AndBit(id_x, id_k), Int 0)), id_test),
+			     Seq (Set (id_tmp, IntVecAcc (id_a, id_x)),
 			       Seq (
 				 Acc (IntVecAcc (id_a, id_x), IntVecAcc (id_a, id_ixj)),
 				 Acc (IntVecAcc (id_a, id_ixj), id_tmp)
@@ -1483,3 +1477,14 @@ let sort ((ker: ('a, 'b, ('c -> 'c -> 'd), 'f, 'g) sarek_kernel)) ?dev:(device=(
 	  
 
      
+let mapReduce ((ker1: ('a, 'b, ('c -> 'd), 'f, 'g) sarek_kernel)) (ker2: ('h, 'i, ('d -> 'k -> 'l), 'm, 'n) sarek_kernel) ?dev:(device=(Spoc.Devices.init()).(0)) (vec_in: ('c, 'o) Vector.vector) : 'l =
+  let map_res = map ker1 vec_in in
+  let reduce_res = reduce (ker2) map_res in
+  reduce_res
+
+let map2Reduce ((ker1: ('a, 'b, ('c -> 'd -> 'p), 'f, 'g) sarek_kernel)) (ker2: ('h, 'i, ('p -> 'k -> 'l), 'm, 'n) sarek_kernel) ?dev:(device=(Spoc.Devices.init()).(0)) (vec_in1: ('c, 'o) Vector.vector) (vec_in2: ('d, 'q) Vector.vector) : 'l =
+  let map_res = map2 ker1 vec_in1 vec_in2 in
+  let reduce_res = reduce (ker2) map_res in
+  reduce_res
+  
+    
